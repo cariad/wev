@@ -10,10 +10,19 @@ class CacheReadError(Exception):
         super().__init__(f'Could not read cache at "{path}": {exception}')
 
 
-class HandlerNotInstalled(Exception):
+class MultiplePluginsForHandlerError(Exception):
     """
-    Raised when a required handler is not installed.
+    Raised when multiple plugins are installed for a given handler.
     """
 
-    def __init__(self, name: str) -> None:
-        super().__init__(f'The plugin "{name}" is not installed.')
+    def __init__(self, handler: str, count: int) -> None:
+        super().__init__(f'{count} plugins are installed for "{handler}".')
+
+
+class NoPluginForHandlerError(Exception):
+    """
+    Raised when a plugin is not installed for a given handler.
+    """
+
+    def __init__(self, handler: str) -> None:
+        super().__init__(f'No plugin installed for "{handler}".')
