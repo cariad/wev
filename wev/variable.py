@@ -1,3 +1,4 @@
+from logging import getLogger
 from typing import Any, Dict, Optional
 
 from wev.sdk import Resolution
@@ -13,18 +14,22 @@ class Variable(dict):
     """
 
     def __init__(self, name: str, values: Dict[str, Any]) -> None:
+        self.logger = getLogger("wev")
         self.name = name
         self.update(values)
 
     @property
-    def configuration(self) -> Any:
+    def configuration(self) -> Dict[Any, Any]:
         """
         Gets the handler's configuration.
 
         Returns:
             Handler's configuration.
         """
-        return self["configuration"]
+        configuration: Dict[Any, Any] = self.get("configuration", {})
+        if not configuration:
+            self.logger.debug("%s has no configuration.", self.name)
+        return configuration
 
     @property
     def handler(self) -> str:
@@ -49,3 +54,7 @@ class Variable(dict):
             r["variable_name"] = self.name
             return r
         return None
+
+    @property
+    def should_read_from_cache(self) -> bool:
+        return not not (self.resolution and self.resolution.should_read_from_cache)

@@ -10,12 +10,25 @@ class Resolution(dict):
             self.update(values)
 
     @classmethod
-    def make(cls, value: str, expires_at: Optional[datetime] = None) -> "Resolution":
-        values: Dict[str, Any] = {"value": value}
+    def make(
+        cls, value: Optional[str] = None, expires_at: Optional[datetime] = None
+    ) -> "Resolution":
+        """
+        Makes a `Resolution` to describe a value and the duration to cache it.
 
+        Args:
+            value:      Environment variable value, or `None` to not set.
+            expires_at: Time to cache the value until. `None` to not cache.
+
+        Returns:
+            Resolution.
+        """
+        values: Dict[str, Any] = {}
+        if value is not None:
+            values.update({"value": value})
         if expires_at:
             values.update({"expires_at": expires_at.isoformat()})
-
+        getLogger("wev").debug(values)
         return Resolution(values)
 
     @property
@@ -31,35 +44,34 @@ class Resolution(dict):
         return None
 
     @property
-    def seconds_until_expiry(self) -> Optional[int]:
-        expires_at = self.expires_at
+    def should_read_from_cache(self) -> bool:
+        return not not (self.expires_at and datetime.now() < self.expires_at)
 
-        if not expires_at:
-            self.logger.debug(
-                "%s is never cached, so will be considered expired.",
-                self.variable_name,
-            )
-            return None
-
-        seconds = int((expires_at - datetime.now()).total_seconds())
-
-        if seconds > 0:
-            self.logger.debug(
-                "%s will expire in %s seconds at %s.",
-                self.variable_name,
-                seconds,
-                expires_at,
-            )
+    @property
+    def explain_cache(self) -> str:
+        if self.seconds_until_expiry is None:
+            return "The value is never cached."
+        elif self.seconds_until_expiry > 0:
+            return f"The cached value will expire {self.time_until_expiry}."
         else:
-            self.logger.debug(
-                "%s expired %s seconds ago at %s.",
-                self.variable_name,
-                0 - seconds,
-                expires_at,
-            )
+            return f"The cached value expired {self.time_until_expiry}."
 
-        return seconds
+    @property
+    def seconds_until_expiry(self) -> Optional[int]:
+        if not self.expires_at:
+            return None
+        return int((self.expires_at - datetime.now()).total_seconds())
+
+    @property
+    def time_until_expiry(self) -> str:
+        if self.seconds_until_expiry is None:
+            return "immediately"
+        elif self.seconds_until_expiry > 0:
+            return f"in {self.seconds_until_expiry:n} seconds"
+        else:
+            return f"{0-self.seconds_until_expiry:n} seconds ago"
 
     @property
     def value(self) -> str:
+        self.logger.debug("Reading the resolved value: %s", self)
         return str(self["value"])
