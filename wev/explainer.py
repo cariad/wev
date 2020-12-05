@@ -1,56 +1,59 @@
-from datetime import datetime
-
-from colorama import Style
+from logging import Logger, getLogger
+from typing import Optional
 
 from wev import Cache, get_plugin, get_variables, get_version
+from wev.text import bold, dim, get_now
 
 
-def explain() -> None:
+def explain(logger: Optional[Logger] = None) -> None:
+    """
+    Logs an explanation of what an execution will do.
+
+    Args:
+        logger: Logger. One will be created if not specified.
+    """
+    return _explain(logger=logger or getLogger("wev"))
+
+
+def _explain(logger: Logger) -> None:
+    """
+    Logs an explanation of what an execution will do.
+
+    Args:
+        logger: Logger.
+    """
     cache = Cache()
     cache.read()
-    print()
-    print(
-        Style.BRIGHT,
-        "wev",
-        Style.RESET_ALL,
-        f" ({get_version()}) execution plan generated at ",
-        Style.BRIGHT,
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        Style.RESET_ALL,
-        ":",
-        sep="",
+
+    logger.info(
+        "%s (%s) execution plan generated at %s:",
+        bold("wev"),
+        get_version(),
+        bold(get_now()),
     )
-    print()
+
+    list_index_padding = 2
+    list_index_suffix = "."
+
     for index, variable in enumerate(get_variables(cache=cache)):
-        num = str(index + 1).rjust(2) + "."
-        name = Style.BRIGHT + variable.name + Style.RESET_ALL
-        handler = Style.BRIGHT + variable.handler + Style.RESET_ALL
+        logger.info("")
 
-        print(f"{num} {name} will be resolved by the {handler} plugin.")
+        logger.info(
+            "%s%s %s will be resolved by the %s plugin.",
+            str(index + 1).rjust(list_index_padding),
+            list_index_suffix,
+            bold(variable.name),
+            bold(variable.handler),
+        )
 
-        margin = "  "
+        margin = "    "
 
         if variable.resolution:
-            print()
-            seconds = variable.resolution.seconds_until_expiry
-            if seconds is not None and seconds > 0:
-                print(
-                    margin,
-                    Style.DIM,
-                    f"The cached value will be used for another {seconds} seconds.",
-                    Style.RESET_ALL,
-                )
-            elif seconds is not None and seconds <= 0:
-                print(
-                    margin,
-                    Style.DIM,
-                    f"The cached value expired {0-seconds} seconds ago. ",
-                    "The cache will be refreshed.",
-                    Style.RESET_ALL,
-                )
+            logger.info("")
+            logger.info("%s%s", margin, dim(variable.resolution.explain_cache))
 
-        print()
-        plugin = get_plugin(variable)
-        for line in plugin.explain():
-            print(f"    {Style.DIM}{line}{Style.RESET_ALL}")
-        print()
+        if not variable.should_read_from_cache:
+            logger.info("")
+            plugin = get_plugin(variable)
+            for line in plugin.explain():
+                logger.info("%s%s", margin, dim(line))
