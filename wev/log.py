@@ -1,3 +1,4 @@
+import locale
 from logging import (
     CRITICAL,
     DEBUG,
@@ -6,7 +7,6 @@ from logging import (
     Formatter,
     LogRecord,
     StreamHandler,
-    basicConfig,
     root,
 )
 from sys import stdout
@@ -16,16 +16,28 @@ from colorama import Style
 from colorama import init as colorama_init
 
 
-def init() -> None:
-    basicConfig()
+def init(level: str = "INFO") -> None:
+    """
+    Initialises logging.
+
+    Args:
+        level: Log level.
+    """
     colorama_init()
+    locale.setlocale(locale.LC_ALL, "")
     handler = StreamHandler(stdout)
     handler.setFormatter(LogFormatter())
     root.addHandler(handler)
-    set_level("INFO")
+    set_level(level)
 
 
 def set_level(level: str) -> None:
+    """
+    Sets the log level.
+
+    Args:
+        level: Log level.
+    """
     root.setLevel(level)
 
 
