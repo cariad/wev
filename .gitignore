@@ -3,6 +3,7 @@ __*__
 .DS_Store
 .coverage
 .mypy_cache
+.pytest_cache
 .vscode
 build
 dist
