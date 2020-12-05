@@ -9,6 +9,15 @@ from wev.sdk import Resolution
 
 
 def fresh_resolution(resolution: Optional[Resolution]) -> Optional[Resolution]:
+    """
+    Returns the resolution if it exists and hasn't expired.
+
+    Args:
+        resolution: Resolution.
+
+    Returns:
+        Resolution if it's fresh, otherwise `None`.
+    """
     if not resolution:
         return None
     elif resolution.seconds_until_expiry is None:
@@ -20,43 +29,49 @@ def fresh_resolution(resolution: Optional[Resolution]) -> Optional[Resolution]:
 
 
 def resolve() -> Dict[str, str]:
+    """
+    Gathers values for all the required environment variables. Reads from the
+    cache where possible, and invokes plugins where needed.
 
-    # logger = getLogger("wev")
+    Returns:
+        Environment variable names and values.
+    """
+
+    logger = getLogger("wev")
 
     cache = Cache()
     cache.read()
+
     environs: Dict[str, str] = {**environ}
 
     for variable in get_variables(cache=cache):
-
         if resolution := fresh_resolution(variable.resolution):
-            print(
+            logger.debug(
+                "%s%s%s has a fresh cache.",
                 Style.BRIGHT,
                 variable.name,
-                Style.RESET_ALL,
-                " has a fresh cache.",
-                sep="",
+                Style.NORMAL,
             )
         else:
-            print(
-                "Resolving ",
+            logger.info(
+                "Resolving %s%s%s...",
                 Style.BRIGHT,
                 variable.name,
-                Style.RESET_ALL,
-                "...",
-                sep="",
+                Style.NORMAL,
             )
 
-            plugin = get_plugin(variable)
-            plugin_logger = getLogger(variable.handler)
-            resolution = plugin.resolve(logger=plugin_logger)
+            plugin = get_plugin(
+                handler=variable.handler,
+                configuration=variable.configuration,
+            )
+            resolution = plugin.resolve(logger=getLogger(variable.handler))
             if resolution.expires_at:
                 cache.update(var_name=variable.name, resolution=resolution)
             else:
                 cache.remove(var_name=variable.name)
 
-        environs.update({variable.name: resolution.value})
+        if resolution.value is not None:
+            environs.update({variable.name: resolution.value})
 
     cache.write()
-
     return environs
