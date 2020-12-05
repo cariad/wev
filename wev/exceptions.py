@@ -10,7 +10,7 @@ class CacheReadError(Exception):
         super().__init__(f'Could not read cache at "{path}": {exception}')
 
 
-class MultiplePluginsForHandlerError(Exception):
+class MultiplePluginsError(Exception):
     """
     Raised when multiple plugins are installed for a given handler.
     """
@@ -19,7 +19,7 @@ class MultiplePluginsForHandlerError(Exception):
         super().__init__(f'{count} plugins are installed for "{handler}".')
 
 
-class NoPluginForHandlerError(Exception):
+class NoPluginError(Exception):
     """
     Raised when a plugin is not installed for a given handler.
     """

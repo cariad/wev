@@ -1,10 +1,6 @@
 from pathlib import Path
 
-from wev.exceptions import (
-    CacheReadError,
-    MultiplePluginsForHandlerError,
-    NoPluginForHandlerError,
-)
+from wev.exceptions import CacheReadError, MultiplePluginsError, NoPluginError
 
 
 def test_cachereaderror() -> None:
@@ -12,11 +8,11 @@ def test_cachereaderror() -> None:
     assert str(ex) == 'Could not read cache at "/foo": cake is on fire'
 
 
-def test_nopluginforhandlererror() -> None:
-    ex = NoPluginForHandlerError(handler="foo")
+def test_nopluginrerror() -> None:
+    ex = NoPluginError(handler="foo")
     assert str(ex) == 'No plugin installed for "foo".'
 
 
 def test_multiplepluginsforhandlererror() -> None:
-    ex = MultiplePluginsForHandlerError(handler="foo", count=3)
+    ex = MultiplePluginsError(handler="foo", count=3)
     assert str(ex) == '3 plugins are installed for "foo".'

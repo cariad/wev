@@ -35,9 +35,9 @@ def _explain(logger: Logger) -> None:
     list_index_padding = 2
     list_index_suffix = "."
 
-    for index, variable in enumerate(get_variables(cache=cache)):
-        logger.info("")
+    logger.info("")
 
+    for index, variable in enumerate(get_variables(cache=cache)):
         logger.info(
             "%s%s %s will be resolved by the %s plugin.",
             str(index + 1).rjust(list_index_padding),
@@ -54,6 +54,11 @@ def _explain(logger: Logger) -> None:
 
         if not variable.should_read_from_cache:
             logger.info("")
-            plugin = get_plugin(variable)
+            plugin = get_plugin(
+                handler=variable.handler,
+                configuration=variable.configuration,
+            )
             for line in plugin.explain():
                 logger.info("%s%s", margin, dim(line))
+
+        logger.info("")

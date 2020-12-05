@@ -55,8 +55,9 @@ def get_variables() -> Iterator[Iterator[Variable]]:
 
 @fixture
 def get_plugin() -> Iterator[PluginBase]:
-    with patch("wev.explainer.get_plugin", return_value=MockPlugin()) as get_plugin:
-        yield get_plugin
+    plugin = MockPlugin(config={})
+    with patch("wev.explainer.get_plugin", return_value=plugin) as patched:
+        yield patched
 
 
 @patch("wev.explainer.get_now", return_value="(now)")
@@ -131,6 +132,7 @@ def test(
         ),
         call(""),
         call("%s%s", "    ", "\x1b[2m(explanation)\x1b[22m"),
+        call(""),
     ]
 
     assert logger.info.call_count == len(expect_info)
