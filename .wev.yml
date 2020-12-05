@@ -1,0 +1,9 @@
+MY_NAME:
+  handler: wev-echo
+  configuration:
+    value: Bobby Pringles
+
+MY_FLAVOR:
+  handler: wev-echo
+  configuration:
+    value: Spicy

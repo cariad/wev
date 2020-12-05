@@ -15,6 +15,9 @@ yamllint = "~=1.25"
 
 [packages]
 pyyaml = "~=5.3"
+dwalk = {path = "./../dwalk/dist/dwalk-_1._1._1-py3-none-any.whl"}
+wev = {path = "./dist/wev-_1._1._1-py3-none-any.whl"}
+colorama = "*"
 
 [requires]
 python_version = "3.9"

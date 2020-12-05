@@ -42,7 +42,8 @@ setup(
     entry_points={
         "console_scripts": [
             "wev=wev.__main__:cli_entry",
-        ]
+        ],
+        "wev.plugins": "wev-echo = wev.wev_echo",
     },
     include_package_data=True,
     install_requires=[
