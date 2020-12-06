@@ -4,8 +4,9 @@ from typing import Dict, Optional
 
 from colorama import Style
 
-from wev import Cache, get_plugin, get_variables
+from wev import get_plugin
 from wev.sdk import Resolution
+from wev.state import BaseState, State
 
 
 def fresh_resolution(resolution: Optional[Resolution]) -> Optional[Resolution]:
@@ -28,7 +29,7 @@ def fresh_resolution(resolution: Optional[Resolution]) -> Optional[Resolution]:
         return resolution
 
 
-def resolve() -> Dict[str, str]:
+def resolve(state: Optional[BaseState] = None) -> Dict[str, str]:
     """
     Gathers values for all the required environment variables. Reads from the
     cache where possible, and invokes plugins where needed.
@@ -38,13 +39,11 @@ def resolve() -> Dict[str, str]:
     """
 
     logger = getLogger("wev")
-
-    cache = Cache()
-    cache.read()
+    this_state = state or State()
 
     environs: Dict[str, str] = {**environ}
 
-    for variable in get_variables(cache=cache):
+    for variable in this_state.get_variables():
         if resolution := fresh_resolution(variable.resolution):
             logger.debug(
                 "%s%s%s has a fresh cache.",
@@ -66,12 +65,18 @@ def resolve() -> Dict[str, str]:
             )
             resolution = plugin.resolve(logger=getLogger(variable.handler))
             if resolution.expires_at:
-                cache.update(var_name=variable.name, resolution=resolution)
+                this_state.resolution_cache.update(
+                    var_name=variable.name,
+                    resolution=resolution,
+                )
             else:
-                cache.remove(var_name=variable.name)
+                this_state.resolution_cache.remove(var_name=variable.name)
 
         if resolution.value is not None:
             environs.update({variable.name: resolution.value})
 
-    cache.write()
+    # Save the cache only if we own it.
+    if not state:
+        this_state.resolution_cache.save()
+
     return environs

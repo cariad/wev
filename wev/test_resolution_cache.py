@@ -1,10 +1,10 @@
 from pathlib import Path
 from tempfile import TemporaryDirectory
-from typing import Iterator
+from typing import Iterator, Optional
 
 from pytest import fixture, raises
 
-from wev import Cache
+from wev import ResolutionCache
 from wev.exceptions import CacheReadError
 from wev.log import init
 from wev.sdk import Resolution
@@ -17,12 +17,16 @@ def cache_path() -> Iterator[Path]:
         yield Path(cache_dir).joinpath(".wevcache")
 
 
+def make_cache(path: Optional[Path] = None) -> ResolutionCache:
+    return ResolutionCache(context="", path=path)
+
+
 def test_read__corrupt(cache_path: Path) -> None:
     with open(cache_path, "w") as stream:
         stream.write("{")
 
     with raises(CacheReadError) as ex:
-        Cache(path=cache_path).read()
+        make_cache(path=cache_path).load()
 
     assert str(ex.value) == (
         f'Could not read cache at "{cache_path}": '
@@ -35,25 +39,25 @@ def test_read__empty(cache_path: Path) -> None:
     with open(cache_path, "w") as stream:
         stream.write("")
 
-    cache = Cache(path=cache_path)
-    cache.read()
+    cache = make_cache(path=cache_path)
+    cache.load()
     assert cache.resolutions == {}
 
 
 def test_read__not_exists(cache_path: Path) -> None:
-    cache = Cache(path=cache_path)
-    cache.read()
+    cache = make_cache(path=cache_path)
+    cache.load()
     assert cache.resolutions == {}
 
 
 def test_write_then_read(cache_path: Path) -> None:
     resolution = Resolution.make(value="bar")
-    writer = Cache(path=cache_path)
+    writer = make_cache(path=cache_path)
     writer.update(var_name="foo", resolution=resolution)
-    writer.write()
+    writer.save()
 
-    reader = Cache(path=cache_path)
-    reader.read()
+    reader = make_cache(path=cache_path)
+    reader.load()
     assert len(reader.resolutions) == 1
     assert reader.get("foo") == resolution
 
@@ -61,7 +65,7 @@ def test_write_then_read(cache_path: Path) -> None:
 def test_update__add_then_get() -> None:
     resolution_a = Resolution.make(value="")
     resolution_b = Resolution.make(value="")
-    cache = Cache()
+    cache = make_cache()
     cache.update(var_name="alpha", resolution=resolution_a)
     cache.update(var_name="beta", resolution=resolution_b)
     assert len(cache.resolutions) == 2
@@ -72,7 +76,7 @@ def test_update__add_then_get() -> None:
 def test_update__update_then_get() -> None:
     resolution_a = Resolution.make(value="")
     resolution_b = Resolution.make(value="")
-    cache = Cache()
+    cache = make_cache()
     cache.update(var_name="alpha", resolution=resolution_a)
     cache.update(var_name="alpha", resolution=resolution_b)
     assert len(cache.resolutions) == 1
@@ -82,7 +86,7 @@ def test_update__update_then_get() -> None:
 def test_update_then_remove() -> None:
     resolution_a = Resolution.make(value="")
     resolution_b = Resolution.make(value="")
-    cache = Cache()
+    cache = make_cache()
     cache.update(var_name="alpha", resolution=resolution_a)
     cache.update(var_name="beta", resolution=resolution_b)
     cache.remove("alpha")
@@ -93,4 +97,4 @@ def test_update_then_remove() -> None:
 
 def test_remove__not_exists() -> None:
     # Just assert that it doesn't raise an exception.
-    Cache().remove("alpha")
+    make_cache().remove("alpha")

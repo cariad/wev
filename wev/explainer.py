@@ -1,30 +1,28 @@
 from logging import Logger, getLogger
 from typing import Optional
 
-from wev import Cache, get_plugin, get_variables, get_version
+from wev import get_plugin, get_version
+from wev.state import BaseState, State
 from wev.text import bold, dim, get_now
 
 
-def explain(logger: Optional[Logger] = None) -> None:
+def explain(logger: Optional[Logger] = None, state: Optional[BaseState] = None) -> None:
     """
     Logs an explanation of what an execution will do.
 
     Args:
         logger: Logger. One will be created if not specified.
     """
-    return _explain(logger=logger or getLogger("wev"))
+    return _explain(logger=logger or getLogger("wev"), state=state or State())
 
 
-def _explain(logger: Logger) -> None:
+def _explain(logger: Logger, state: BaseState) -> None:
     """
     Logs an explanation of what an execution will do.
 
     Args:
         logger: Logger.
     """
-    cache = Cache()
-    cache.read()
-
     logger.info(
         "%s (%s) execution plan generated at %s:",
         bold("wev"),
@@ -37,7 +35,7 @@ def _explain(logger: Logger) -> None:
 
     logger.info("")
 
-    for index, variable in enumerate(get_variables(cache=cache)):
+    for index, variable in enumerate(state.get_variables()):
         logger.info(
             "%s%s %s will be resolved by the %s plugin.",
             str(index + 1).rjust(list_index_padding),

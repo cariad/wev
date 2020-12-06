@@ -1,4 +1,4 @@
-from datetime import datetime
+# from datetime import datetime
 from logging import Logger
 from typing import Iterator, List
 
@@ -7,7 +7,7 @@ from pytest import fixture
 
 from wev.explainer import explain
 from wev.sdk import PluginBase, Resolution
-from wev.variable import Variable
+from wev.state import MockState
 
 
 class MockPlugin(PluginBase):
@@ -19,41 +19,6 @@ class MockPlugin(PluginBase):
 
 
 @fixture
-def get_variables() -> Iterator[Iterator[Variable]]:
-    mock_now = "2020-01-01T00:00:01"
-
-    var_a = Variable(name="alpha", values={"handler": "alpha-handler"})
-
-    var_b = Variable(
-        name="beta",
-        values={"handler": "beta-handler", "resolution": {"value": ""}},
-    )
-
-    var_c = Variable(
-        name="gamma",
-        values={
-            "handler": "gamma-handler",
-            "resolution": {"expires_at": "2020-01-01T00:00:02"},
-        },
-    )
-
-    var_d = Variable(
-        name="delta",
-        values={
-            "handler": "delta-handler",
-            "resolution": {"expires_at": "2020-01-01T00:00:00"},
-        },
-    )
-
-    v = [var_a, var_b, var_c, var_d]
-    with patch("wev.sdk.resolution.datetime") as patched_datetime:
-        patched_datetime.now = Mock(return_value=datetime.fromisoformat(mock_now))
-        patched_datetime.fromisoformat = datetime.fromisoformat
-        with patch("wev.explainer.get_variables", return_value=iter(v)) as patched:
-            yield patched
-
-
-@fixture
 def get_plugin() -> Iterator[PluginBase]:
     plugin = MockPlugin(config={})
     with patch("wev.explainer.get_plugin", return_value=plugin) as patched:
@@ -61,13 +26,9 @@ def get_plugin() -> Iterator[PluginBase]:
 
 
 @patch("wev.explainer.get_now", return_value="(now)")
-def test(
-    get_now: Mock,
-    get_plugin: PluginBase,
-    get_variables: Iterator[Variable],
-) -> None:
+def test(get_now: Mock, get_plugin: PluginBase) -> None:
     logger = Mock()
-    explain(logger=logger)
+    explain(logger=logger, state=MockState())
 
     expect_info = [
         call(
@@ -114,7 +75,7 @@ def test(
         call(
             "%s%s",
             "    ",
-            "\x1b[2mThe cached value will expire in 1 seconds.\x1b[22m",
+            "\x1b[2mThe cached value will expire in 59 seconds.\x1b[22m",
         ),
         call(""),
         call(
@@ -128,7 +89,7 @@ def test(
         call(
             "%s%s",
             "    ",
-            "\x1b[2mThe cached value expired 1 seconds ago.\x1b[22m",
+            "\x1b[2mThe cached value expired 60 seconds ago.\x1b[22m",
         ),
         call(""),
         call("%s%s", "    ", "\x1b[2m(explanation)\x1b[22m"),

@@ -53,11 +53,15 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     name="wev",
-    packages=["wev.sdk"],
+    packages=[
+        "wev.sdk",
+        "wev.state",
+    ],
     # "py.typed" in each package's directory must be included for the package to
     # be considered typed.
     package_data={
         "wev.sdk": ["py.typed"],
+        "wev.state": ["py.typed"],
     },
     python_requires=">=3.8",
     url="https://github.com/cariad/wev",

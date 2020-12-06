@@ -7,18 +7,26 @@ from wev.exceptions import CacheReadError
 from wev.sdk import Resolution
 
 
-class Cache:
+class ResolutionCache:
     """
     Local cache of resolutions.
 
     Args:
+        context: An environment variable could have different meanings in
+                 different contexts. For example,
         path: Path to cache. Uses the user's home directory by default.
     """
 
-    def __init__(self, path: Optional[Path] = None) -> None:
+    def __init__(self, context: str, path: Optional[Path] = None) -> None:
         self.logger = getLogger("wev")
+        self.context = context
         self.path = path or Path.home().absolute().joinpath(".wevcache")
         self.resolutions: Dict[str, Resolution] = {}
+        self.logger.debug(
+            'ResolutionCache: context="%s", path="%s"',
+            self.context,
+            self.path,
+        )
 
     def get(self, var_name: str) -> Optional[Resolution]:
         """
@@ -32,19 +40,18 @@ class Cache:
         """
         return self.resolutions.get(var_name, None)
 
-    def read(self) -> None:
+    def read_all(self) -> Dict[str, Dict[str, Resolution]]:
         """
-        Reads the cache file into memory.
+        Reads the entire cache file.
 
-        Raises:
-            CacheReadError: The cache could not be read.
+        Raises `CacheReadError` if the cache cannot be read.
         """
-        self.resolutions = {}
+        everything: Dict[str, Dict[str, Resolution]] = {}
         self.logger.debug("Reading cache: %s", self.path)
         try:
             with open(self.path, "r") as stream:
                 if content := stream.read().strip():
-                    self.resolutions = loads(content)
+                    everything = loads(content)
                 else:
                     self.logger.debug("Cache is empty: %s", self.path)
         except FileNotFoundError:
@@ -52,6 +59,15 @@ class Cache:
         except Exception as ex:
             self.logger.error("Failed to read cache: %s", ex)
             raise CacheReadError(exception=ex, path=self.path)
+        return everything
+
+    def load(self) -> None:
+        """
+        Reads the contextual cache.
+
+        Raises `CacheReadError` if the cache cannot be read.
+        """
+        self.resolutions = self.read_all().get(self.context, {})
 
     def remove(self, var_name: str) -> None:
         """
@@ -66,6 +82,16 @@ class Cache:
         else:
             self.logger.debug("Could not remove %s from cache: not cached.", var_name)
 
+    def save(self) -> None:
+        """
+        Writes the cache file.
+        """
+        self.logger.debug("Writing cache: %s", self.path)
+        everything = self.read_all()
+        everything[self.context] = self.resolutions
+        with open(self.path, "w") as stream:
+            stream.write(dumps(everything))
+
     def update(self, var_name: str, resolution: Resolution) -> None:
         """
         Updates a cached resolution.
@@ -76,11 +102,3 @@ class Cache:
         """
         self.logger.debug("Updating %s in cache.", var_name)
         self.resolutions[var_name] = resolution
-
-    def write(self) -> None:
-        """
-        Writes the cache file.
-        """
-        self.logger.debug("Writing cache: %s", self.path)
-        with open(self.path, "w") as stream:
-            stream.write(dumps(self.resolutions))
