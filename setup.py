@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from setuptools import find_packages, setup
+from setuptools import setup
 
 from wev.version import get_version
 
@@ -53,7 +53,12 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     name="wev",
-    packages=find_packages(),
+    packages=["wev.sdk"],
+    # "py.typed" in each package's directory must be included for the package to
+    # be considered typed.
+    package_data={
+        "wev.sdk": ["py.typed"],
+    },
     python_requires=">=3.8",
     url="https://github.com/cariad/wev",
     version=version,
