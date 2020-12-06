@@ -1,9 +1,11 @@
+from re import match
 from typing import Iterator, Optional
 
 from dwalk import dwalk
 
 from wev import ResolutionCache, Variable
 from wev.state import BaseState
+from copy import deepcopy
 
 
 class State(BaseState):
@@ -23,10 +25,18 @@ class State(BaseState):
         return self._resolution_cache
 
     def get_variables(self) -> Iterator[Variable]:
-        for var_name in self.config:
-            values = {
-                **self.config[var_name],
-                "resolution": self.resolution_cache.get(var_name=var_name),
-            }
+        self.logger.debug("Starting a new variables iteration.")
+        for name in self.config:
+            if match(r"__(.+)__", name):
+                self.logger.debug('Ignoring configuration key "%s".', name)
+                continue
 
-            yield Variable(name=var_name, values=values)
+            self.logger.debug('Configuration describes a variable named "%s".', name)
+            values = deepcopy(self.config[name])
+            self.logger.debug('Configuration values: %s', values)
+
+            if cached_resolution := self.resolution_cache.get(var_name=name):
+                self.logger.debug("Adding cached resolution: %s", cached_resolution)
+                values.update({"resolution": cached_resolution})
+
+            yield Variable(name=name, values=values)

@@ -20,10 +20,10 @@ class ResolutionCache:
     def __init__(self, context: str, path: Optional[Path] = None) -> None:
         self.logger = getLogger("wev")
         self.context = context
-        self.path = path or Path.home().absolute().joinpath(".wevcache")
+        self.path = path or Path.home().absolute().joinpath(".wevcache.json")
         self.resolutions: Dict[str, Resolution] = {}
         self.logger.debug(
-            'ResolutionCache: context="%s", path="%s"',
+            'ResolutionCache: context="%s" path="%s"',
             self.context,
             self.path,
         )
@@ -90,7 +90,7 @@ class ResolutionCache:
         everything = self.read_all()
         everything[self.context] = self.resolutions
         with open(self.path, "w") as stream:
-            stream.write(dumps(everything))
+            stream.write(dumps(everything, indent=2, sort_keys=True))
 
     def update(self, var_name: str, resolution: Resolution) -> None:
         """

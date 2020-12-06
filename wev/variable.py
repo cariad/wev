@@ -15,6 +15,7 @@ class Variable(dict):
 
     def __init__(self, name: str, values: Dict[str, Any]) -> None:
         self.logger = getLogger("wev")
+        self.logger.debug('Variable: name="%s" values="%s"', name, values)
         self.name = name
         self.update(values)
 
@@ -39,7 +40,10 @@ class Variable(dict):
         Returns:
             Handler.
         """
-        return str(self["handler"])
+        try:
+            return str(self["handler"])
+        except KeyError:
+            raise KeyError(f'"handler" not set in variable: {self}')
 
     @property
     def resolution(self) -> Optional[Resolution]:
