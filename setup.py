@@ -49,7 +49,8 @@ setup(
     install_requires=[
         "colorama~=0.4",
         "dwalk~=1.1",
-        "pyyaml~=5.3",
+        "pytz",
+        "ruamel.yaml~=0.16",
     ],
     license="MIT License",
     long_description=long_description,
