@@ -19,7 +19,7 @@ jobs:
         run: pipenv run ./test.sh
 
       - name: Version
-        run: echo "${GITHUB_REF##*/}" > dwalk/VERSION
+        run: echo "${GITHUB_REF##*/}" > wev/VERSION
 
       - name: Build
         run: pipenv run ./build.sh
