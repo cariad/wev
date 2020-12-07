@@ -9,10 +9,10 @@ def test_cachereaderror() -> None:
 
 
 def test_nopluginrerror() -> None:
-    ex = NoPluginError(handler="foo")
-    assert str(ex) == 'No plugin installed for "foo".'
+    ex = NoPluginError(plugin_id="foo")
+    assert str(ex) == '"foo" isn\'t installed. Try "pip3 install foo"?'
 
 
 def test_multiplepluginsforhandlererror() -> None:
-    ex = MultiplePluginsError(handler="foo", count=3)
-    assert str(ex) == '3 plugins are installed for "foo".'
+    ex = MultiplePluginsError(plugin_id="foo", count=3)
+    assert str(ex) == '3 plugins are claiming to be "foo".'

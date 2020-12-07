@@ -1,17 +1,34 @@
-from datetime import datetime
-from logging import getLogger
-from typing import Any, Dict, Optional
+from datetime import datetime, timezone
+from typing import Any, Dict, Optional, Tuple, Union
+
+from pytz import UTC
+
+from wev.logging import get_logger
 
 
-class Resolution(dict):
-    def __init__(self, values: Optional[Dict[str, Any]] = None) -> None:
-        self.logger = getLogger("wev")
-        if values:
-            self.update(values)
+class Resolution:
+    def __init__(self, store: Dict[str, Any]) -> None:
+        self.logger = get_logger()
+        self.logger.debug("Resolution: store=%s", store)
+        if not isinstance(store, dict):
+            raise ValueError('"store" is not a dictionary: %s', type(store))
+        self.store = store
+
+    def __eq__(self, other: Any) -> bool:
+        self.logger.debug('Checking if "%s" == "%s".', self, other)
+        return isinstance(other, Resolution) and self.store == other.store
+
+    def __ne__(self, other: Any) -> bool:
+        return not self.__eq__(other)
+
+    def __repr__(self) -> str:
+        return str(self.store)
 
     @classmethod
     def make(
-        cls, value: Optional[str] = None, expires_at: Optional[datetime] = None
+        cls,
+        value: Optional[Union[str, Tuple[str, ...]]] = None,
+        expires_at: Optional[datetime] = None,
     ) -> "Resolution":
         """
         Makes a `Resolution` to describe a value and the duration to cache it.
@@ -23,29 +40,37 @@ class Resolution(dict):
         Returns:
             Resolution.
         """
-        values: Dict[str, Any] = {}
+        store: Dict[str, Any] = {}
         if value is not None:
-            values.update({"value": value})
+            if isinstance(value, str):
+                store.update({"values": (value,)})
+            else:
+                store.update({"values": value})
         if expires_at:
-            values.update({"expires_at": expires_at.isoformat()})
-        getLogger("wev").debug(values)
-        return Resolution(values)
-
-    @property
-    def variable_name(self) -> Optional[str]:
-        if variable_name := self.get("variable_name", None):
-            return str(variable_name)
-        return None
+            store.update({"expires_at": expires_at.isoformat()})
+        get_logger().debug('"Resolution.make" created store: %s', store)
+        return Resolution(store=store)
 
     @property
     def expires_at(self) -> Optional[datetime]:
-        if expires_at := self.get("expires_at", None):
-            return datetime.fromisoformat(expires_at)
+        if expires_at := self.store.get("expires_at", None):
+            dt = datetime.fromisoformat(str(expires_at))
+            if not dt.tzinfo:
+                dt = UTC.localize(dt)
+                self.logger.debug(
+                    '"expires_at" (%s) has been localized to UTC: %s',
+                    expires_at,
+                    dt,
+                )
+            return dt
         return None
+
+    def now(self) -> datetime:
+        return datetime.now(timezone.utc)
 
     @property
     def should_read_from_cache(self) -> bool:
-        return not not (self.expires_at and datetime.now() < self.expires_at)
+        return not not (self.expires_at and self.now() < self.expires_at)
 
     @property
     def explain_cache(self) -> str:
@@ -60,7 +85,7 @@ class Resolution(dict):
     def seconds_until_expiry(self) -> Optional[int]:
         if not self.expires_at:
             return None
-        return int((self.expires_at - datetime.now()).total_seconds())
+        return int((self.expires_at - self.now()).total_seconds())
 
     @property
     def time_until_expiry(self) -> str:
@@ -72,6 +97,9 @@ class Resolution(dict):
             return f"{0-self.seconds_until_expiry:n} seconds ago"
 
     @property
-    def value(self) -> str:
-        self.logger.debug("Reading the resolved value: %s", self)
-        return str(self["value"])
+    def values(self) -> Tuple[str, ...]:
+        self.logger.debug("Reading the resolved value: %s", self.store)
+        values = self.store.get("values", [])
+        if isinstance(values, tuple):
+            return values
+        return (values,)

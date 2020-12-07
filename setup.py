@@ -38,7 +38,7 @@ setup(
     author="Cariad Eccleston",
     author_email="cariad@cariad.me",
     classifiers=classifiers,
-    description="With environment variables",
+    description="Run shell commands with environment variables",
     entry_points={
         "console_scripts": [
             "wev=wev.__main__:cli_entry",
@@ -47,21 +47,27 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "pyyaml",
+        "colorama~=0.4",
+        "dwalk~=1.1",
+        "pyyaml~=5.3",
     ],
     license="MIT License",
     long_description=long_description,
     long_description_content_type="text/markdown",
     name="wev",
     packages=[
+        "wev.logging",
         "wev.sdk",
         "wev.state",
+        "wev.text",
     ],
     # "py.typed" in each package's directory must be included for the package to
     # be considered typed.
     package_data={
+        "wev.logging": ["py.typed"],
         "wev.sdk": ["py.typed"],
         "wev.state": ["py.typed"],
+        "wev.text": ["py.typed"],
     },
     python_requires=">=3.8",
     url="https://github.com/cariad/wev",

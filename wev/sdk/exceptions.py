@@ -14,7 +14,23 @@ class MissingConfigurationError(Exception):
                      scenarios.
     """
 
-    def __init__(self, key: str, explanation: Optional[str] = None):
-        message = f'The "{key}" configuration key is required'
+    def __init__(self, config: dict, key: str, explanation: Optional[str] = None):
+        message = f"The {key} key is required in {config}"
         message = f"{message}: {explanation}" if explanation else f"{message}."
         super().__init__(message)
+
+
+class CannotPrepareError(Exception):
+    """
+    Raised when the plugin cannot be prepared.
+    """
+
+    pass
+
+
+class CannotResolveError(Exception):
+    """
+    Raised when a problem prevents resolution.
+    """
+
+    pass

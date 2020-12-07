@@ -1,12 +1,12 @@
-from logging import getLogger
 from os import environ
 from typing import Dict, Optional
 
-from colorama import Style
-
 from wev import get_plugin
-from wev.sdk import Resolution
+from wev.exceptions import IncorrectResolutionCount
+from wev.logging import get_logger
+from wev.sdk import Resolution, ResolutionSupport
 from wev.state import BaseState, State
+from wev.text import bold, dim
 
 
 def fresh_resolution(resolution: Optional[Resolution]) -> Optional[Resolution]:
@@ -38,45 +38,57 @@ def resolve(state: Optional[BaseState] = None) -> Dict[str, str]:
         Environment variable names and values.
     """
 
-    logger = getLogger("wev")
+    logger = get_logger()
     this_state = state or State()
 
     environs: Dict[str, str] = {**environ}
 
     for variable in this_state.get_variables():
         if resolution := fresh_resolution(variable.resolution):
-            logger.debug(
-                "%s%s%s has a fresh cache.",
-                Style.BRIGHT,
-                variable.name,
-                Style.NORMAL,
-            )
+            logger.debug("%s has a fresh cache.", variable.names)
         else:
-            logger.info(
-                "Resolving %s%s%s...",
-                Style.BRIGHT,
-                variable.name,
-                Style.NORMAL,
+            logger.info("Resolving %s...", bold(variable.names))
+
+            support = ResolutionSupport(
+                logger=get_logger(name=variable.plugin.id),
+                confidential_prompt=confidential_prompt,
             )
 
-            plugin = get_plugin(
-                handler=variable.handler,
-                configuration=variable.configuration,
-            )
-            resolution = plugin.resolve(logger=getLogger(variable.handler))
+            plugin = get_plugin(variable.plugin)
+            resolution = plugin.resolve(support=support)
             if resolution.expires_at:
                 this_state.resolution_cache.update(
-                    var_name=variable.name,
+                    names=variable.names,
                     resolution=resolution,
                 )
             else:
-                this_state.resolution_cache.remove(var_name=variable.name)
+                this_state.resolution_cache.remove(names=variable.names)
 
-        if resolution.value is not None:
-            environs.update({variable.name: resolution.value})
+        if resolution.values:
+            logger.debug("Enumerating resolved values: %s", resolution.values)
+            variable_count = len(variable.names)
+            resolution_count = len(resolution.values)
+
+            if variable_count != resolution_count:
+                raise IncorrectResolutionCount(
+                    plugin_id=variable.plugin.id,
+                    variable_count=variable_count,
+                    resolution_count=resolution_count,
+                )
+
+            for index, name in enumerate(variable.names):
+                value = resolution.values[index]
+                logger.debug("Adding resolved variable: %s=%s", name, value)
+                environs.update({name: value})
 
     # Save the cache only if we own it.
     if not state:
         this_state.resolution_cache.save()
 
     return environs
+
+
+def confidential_prompt(preamble: str, prompt: str) -> str:
+    print(dim(preamble))
+    print()
+    return input(prompt)

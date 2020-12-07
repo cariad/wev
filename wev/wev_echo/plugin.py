@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from logging import Logger
 from typing import List
 
-from wev.sdk import PluginBase, Resolution
+from wev.sdk import PluginBase, Resolution, ResolutionSupport
 from wev.sdk.exceptions import MissingConfigurationError
 
 
@@ -11,19 +11,20 @@ class Plugin(PluginBase):
     The `wev-echo` plugin.
     """
 
-    def explain(self) -> List[str]:
+    def explain(self, logger: Logger) -> List[str]:
         """
         Gets a human-readable explanation of how this plugin will resolve the
         environment variable.
 
-        Returns:
-            Explanation.
+        `logger` should be used for logging and not for returning the
+        explanation.
         """
+        logger.debug("Returning plain explanation...")
         return [
             "The environment variable will be set directly to the configured value."
         ]
 
-    def resolve(self, logger: Logger) -> Resolution:
+    def resolve(self, support: ResolutionSupport) -> Resolution:
         """
         Resolves the environment variable.
 
@@ -34,7 +35,7 @@ class Plugin(PluginBase):
             Resolution.
         """
         expires_at = datetime.now() + timedelta(seconds=60)
-        logger.debug("Calculated expiry date: %s", expires_at)
+        support.logger.debug("Calculated expiry date: %s", expires_at)
         return Resolution.make(value=self.value, expires_at=expires_at)
 
     @property
@@ -44,8 +45,9 @@ class Plugin(PluginBase):
         """
         try:
             return str(self["value"])
-        except KeyError:
+        except KeyError as ex:
             raise MissingConfigurationError(
-                key="value",
+                config=self,
                 explanation="This is the value that will be echoed.",
+                key=str(ex),
             )

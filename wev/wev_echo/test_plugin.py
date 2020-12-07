@@ -1,25 +1,27 @@
-from logging import getLogger
+from logging import Logger
 
 from pytest import raises
 
+from wev.sdk import ResolutionSupport
 from wev.sdk.exceptions import MissingConfigurationError
 from wev.wev_echo import Plugin
 
 
-def test_explain() -> None:
-    assert Plugin().explain() == [
+def test_explain(logger: Logger) -> None:
+    assert Plugin().explain(logger=logger) == [
         "The environment variable will be set directly to the configured value."
     ]
 
 
-def test_resolve() -> None:
-    assert Plugin({"value": "foo"}).resolve(logger=getLogger("wev")).value == "foo"
+def test_resolve(resolution_support: ResolutionSupport) -> None:
+    resolution = Plugin({"value": "foo"}).resolve(support=resolution_support)
+    assert resolution.values == ("foo",)
 
 
-def test_resolve__missing_config() -> None:
+def test_resolve__missing_config(resolution_support: ResolutionSupport) -> None:
     with raises(MissingConfigurationError) as ex:
-        Plugin({}).resolve(logger=getLogger("wev"))
+        Plugin({"foo": "bar"}).resolve(support=resolution_support)
     assert str(ex.value) == (
-        'The "value" configuration key is required: '
+        "The 'value' key is required in {'foo': 'bar'}: "
         "This is the value that will be echoed."
     )

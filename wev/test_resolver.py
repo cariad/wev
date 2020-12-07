@@ -1,28 +1,13 @@
 from datetime import datetime, timedelta
-from logging import Logger
-from typing import Iterator, List, Optional
+from typing import Iterator, Optional
 
 from mock import Mock, patch
 from pytest import fixture, mark
 
+from wev.mock_plugin import MockPlugin
 from wev.resolver import fresh_resolution, resolve
 from wev.sdk import PluginBase, Resolution
 from wev.state import MockState
-
-
-class MockPlugin(PluginBase):
-    def __init__(self, config: dict) -> None:
-        super().__init__(config)
-        # self.state = state
-
-    def explain(self) -> List[str]:
-        return ["(explanation)"]
-
-    def resolve(self, logger: Logger) -> Resolution:
-        logger.debug("Setting value...")
-        return Resolution.make(
-            value="(value)", expires_at=datetime.now() + timedelta(seconds=60)
-        )
 
 
 @fixture
@@ -39,13 +24,13 @@ def get_plugin() -> Iterator[PluginBase]:
         (Resolution.make(value=""), False),
         (
             Resolution.make(
-                value="", expires_at=datetime.now() - timedelta(seconds=60)
+                value=None, expires_at=datetime.now() - timedelta(seconds=60)
             ),
             False,
         ),
         (
             Resolution.make(
-                value="", expires_at=datetime.now() + timedelta(seconds=60)
+                value=None, expires_at=datetime.now() + timedelta(seconds=60)
             ),
             True,
         ),

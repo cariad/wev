@@ -1,21 +1,12 @@
-# from datetime import datetime
-from logging import Logger
-from typing import Iterator, List
+from typing import Iterator
 
 from mock import Mock, call, patch
 from pytest import fixture
 
 from wev.explainer import explain
-from wev.sdk import PluginBase, Resolution
+from wev.mock_plugin import MockPlugin
+from wev.sdk import PluginBase
 from wev.state import MockState
-
-
-class MockPlugin(PluginBase):
-    def explain(self) -> List[str]:
-        return ["(explanation)"]
-
-    def resolve(self, logger: Logger) -> Resolution:
-        pass
 
 
 @fixture

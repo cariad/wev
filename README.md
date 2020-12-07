@@ -1,172 +1,96 @@
-# corf: A CodeArtifact Orthoriser
+# wev: run shell commands with environment variables
 
-`corf` is an AWS CodeArtifact orthorisation… uh I mean _authorisation_ helper for `pipenv` and any other command line tools that read CodeArtifact authorisation tokens as environment variables.
+`wev` is a command line tool for resolving environment variables then running shell commands.
 
-## Introduction
+For example:
 
-Say you have a `Pipfile` that describes an AWS CodeArtifact repository as a source and an environment variable to hold the authorisation token:
-
-```text
-[[source]]
-name = "private-pypackages"
-url = "https://aws:$CODEARTIFACT_AUTH_TOKEN@starkindustries-012345678901.d.codeartifact.us-east-1.amazonaws.com/pypi/project-ultron/simple"
-verify_ssl = true
-```
-
-Traditionally, you'd set your authorization token twice a day by running:
-
-```bash
-export CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain starkindustries --domain-owner 012345678901 --query authorizationToken --output text --region us-east-1)
-```
-
-But what if you're a fan of PowerShell or some other weird/wonderful shell? What if you don't want to maintain a set of helper scripts for your team's diverse development machines?
-
-`corf` replaces this:
-
-```bash
-# Magic goes here.
-pipenv install --dev
-```
-
-…with this:
-
-```bash
-corf pipenv install
-```
+- If you have a `Pipfile` that expects the `CODEARTIFACT_AUTH_TOKEN` environment variable to set, `wev pipenv install` can resolve the value then run `pipenv install`.
+- If your AWS IAM user demands multi-factor authentication, `wev aws s3 ls` can prompt for your token, resolve `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`, then run `aws s3 ls`.
 
 ## Installation
 
-`corf` requires >= Python 3.8.
-
-### Installing globally
+`wev` requires Python 3.8 or later.
 
 ```bash
-pip3 install corf
+pip3 install wev
 ```
 
-### Installing in a virtual environment
-
-`corf` is happy to be installed via `pipenv`:
+You will also need to install the plugins that you intend to use. For example, to enable AWS MFA support:
 
 ```bash
-pipenv install corf
+pip3 install wev-awsmfa
 ```
-
-If your `Pipfile` has _only_ private sources that require authorisation tokens then you can add a handy-dandy shortcut script to pull `corf` from the public PyPI index:
-
-```text
-[scripts]
-get-corf = "pip install --upgrade corf -i https://pypi.python.org/simple"
-```
-
-To install `corf` via that shortcut:
-
-```bash
-pipenv shell
-pipenv run get-corf
-```
-
-If your private repository mirrors the public PyPI index and you put `corf` into your `Pipfile` dependencies then you'll need to run `get-corf` only once. Any subsequent runs of `corf pipenv install` will include updates to `corf` itself.
 
 ## Configuration
 
-`corf` will walk your directories to find configuration files that describe the environment variables to set and the CodeArtifact domains to request authorisation tokens from.
+### File locations
 
-For example, to request an authorisation token from the "starkindustries" domain in region "eu-west-1" of AWS account "012345678901" and set it to the "AUTH_TOKEN_FOO" environment variable, you could create this `.corf.yml` in your project directory:
+`wev` is configured via `.wev.yml` files.
+
+`wev` will look for and merge `.wev.yml` files in this order:
+
+1. `.wev.yml` in your home directory. This is the ideal place for environment variables you _always_ need.
+1. All `.wev.yml` files between the volume root and your current working directory.
+
+If multiple `.wev.yml` files are found then they will be merged. The `.wev.yml` file in your home directory has the lowest precedence, while your working directory has the highest.
+
+### File contents
+
+Each `.wev.yml` is a dictionary, where the _key_ is the name of the environment variable to set and the _value_ is the plugin identifier and configuration:
 
 ```yaml
-variables:
-  AUTH_TOKEN_FOO:
-    domain:
-      account: "012345678901"
-      name: starkindustries
-      region: eu-west-1
+ENVIRONMENT_VARIABLE_NAME:
+  plugin:
+    id: PLUGIN_NAME
+    PLUGIN_CONFIGURATION_KEY: PLUGIN_CONFIGURATION_VALUE
+    PLUGIN_CONFIGURATION_KEY: PLUGIN_CONFIGURATION_VALUE
+    PLUGIN_CONFIGURATION_KEY: PLUGIN_CONFIGURATION_VALUE
 ```
 
-To run `pipenv install` with the "AUTH_TOKEN_FOO" environment variable set, run:
+For example, to configure the `wev-echo` plugin (bundled with `wev`) to resolve the environment variable `USERNAME` to the hard-coded value `Finn Mertens`:
+
+```yaml
+USERNAME:
+  plugin:
+    id: wev-echo
+    value: Finn Mertens
+```
+
+If a plugin resolves multiple environment variables--such as `pip-awsmfa`--then the names are specified as a list:
+
+```yaml
+[AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN]:
+  plugin:
+    id: wev-awsmfa
+```
+
+## Command line usage
+
+To get help:
 
 ```bash
-corf pipenv install
+wev
+wev --help
 ```
 
-## Named profiles
-
-`corf` will use your default AWS credentials without prompting. If you need to use a specific named profile then you have three options:
-
-1. Run `corf` with the `--profile` option:
+To see an explanation of what `wev` is planning to do:
 
 ```bash
-corf --profile corp pipenv install
+wev --explain
 ```
 
-This sucks, though, because you need to remember to add the option.
-
-2. Add a `profile` property to `.corf.yml`:
-
-```yaml
-variables:
-  AUTH_TOKEN_FOO:
-    domain:
-      account: "012345678901"
-      name: starkindustries
-      region: eu-west-1
-      profile: corp
-```
-
-This sucks, though, if you want to commit `.corf.yml` to source control to share with your team. They likely don't all use the same named profile as you.
-
-3. Create a `.corf.user.yml` file that contains your personal details, and don't commit that file to source control.
-
-So, if `.corf.yml` is:
-
-```yaml
-variables:
-  AUTH_TOKEN_FOO:
-    domain:
-      account: "012345678901"
-      name: starkindustries
-      region: eu-west-1
-```
-
-…and if `.corf.user.yml` is:
-
-```yaml
-variables:
-  AUTH_TOKEN_FOO:
-    domain:
-      profile: corp
-```
-
-…then the two configurations will be merged at runtime.
-
-## Configuration file locations
-
-`corf` will merge all of the configurations that it finds.
-
-In any given directory, `.corf.user.yml` takes precedence over `.corf.yml`.
-
-The current working directory will take precedence, down to the root directory, then finally your home directory.
-
-## Development notes
-
-### Testing
+To resolve environment variables and run a shell command:
 
 ```bash
-./lint.sh && ./coverage.sh && ./build.sh
+wev <command goes here>
+# For example:
+wev pipenv install
 ```
+
+## Plugin development
+
+This documentation is `TODO`. Yell if you want to build a plugin and need a hand.
 
 ## Thanks!
 
-My name is [Cariad Eccleston](https://cariad.me) and I'm a freelance DevOps engineer. I appreciate you checking out my projects! I love AWS and Python, I'm available for interesing gigs, and I'd love to hear from you!
-
-## FAQs
-
-### Why `corf`?
-
-I _really_ wanted to call it `cauth`, but that's a reserved name on pypi.org. `corf` is close enough.
-
-### Should `.corf.yml` be committed to source control?
-
-`.corf.yml`, yes.
-
-`.corf.user.yml`, no.
+My name is [Cariad Eccleston](https://cariad.me) and I'm a freelance DevOps engineer. I love AWS and Python, and I'm available for interesing gigs. Let's chat!

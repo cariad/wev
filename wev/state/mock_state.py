@@ -12,34 +12,34 @@ class MockState(BaseState):
         self.past = datetime.now() - timedelta(seconds=60)
 
     def get_variables(self) -> Iterator[Variable]:
-        yield Variable(name="alpha", values={"handler": "alpha-handler"})
+        yield Variable(names=("alpha",), store={"plugin": {"id": "alpha-handler"}})
 
         yield Variable(
-            name="beta",
-            values={
-                "handler": "beta-handler",
-                "resolution": {"value": "beta-value-old"},
+            names=("beta",),
+            store={
+                "plugin": {"id": "beta-handler"},
+                "resolution": {"values": ("beta-value-old")},
             },
         )
 
         yield Variable(
-            name="gamma",
-            values={
-                "handler": "gamma-handler",
+            names=("gamma",),
+            store={
+                "plugin": {"id": "gamma-handler"},
                 "resolution": {
                     "expires_at": self.future.isoformat(),
-                    "value": "gamma-value-old",
+                    "values": ("gamma-value-old"),
                 },
             },
         )
 
         yield Variable(
-            name="delta",
-            values={
-                "handler": "delta-handler",
+            names=("delta",),
+            store={
+                "plugin": {"id": "delta-handler"},
                 "resolution": {
                     "expires_at": self.past.isoformat(),
-                    "value": "delta-value-old",
+                    "values": ("delta-value-old"),
                 },
             },
         )

@@ -1,9 +1,24 @@
+# ? MY_NAME
+# : plugin:
+#     id: wev-echo
+#     value: Bobby Pringles
+
 MY_NAME:
-  handler: wev-echo
-  configuration:
+  plugin:
+    id: wev-echo
     value: Bobby Pringles
 
-MY_FLAVOR:
-  handler: wev-echo
-  configuration:
-    value: Spicy
+# - set: MY_FLAVOR
+#   handler:
+#     id: wev-echo
+#     value: Spicy
+
+# ? - AWS_ACCESS_KEY_ID
+#   - AWS_SECRET_ACCESS_KEY
+#   - AWS_SESSION_TOKEN
+# : plugin:
+#     id: wev-awsmfa
+
+[AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN]:
+  plugin:
+    id: wev-awsmfa

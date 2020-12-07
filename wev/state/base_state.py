@@ -1,13 +1,13 @@
 from abc import ABC, abstractmethod, abstractproperty
-from logging import getLogger
 from typing import Iterator
 
 from wev import ResolutionCache, Variable
+from wev.logging import get_logger
 
 
 class BaseState(ABC):
     def __init__(self) -> None:
-        self.logger = getLogger("wev")
+        self.logger = get_logger()
         self.logger.debug("Creating a new state.")
 
     @abstractproperty

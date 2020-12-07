@@ -1,9 +1,10 @@
-from logging import Logger, getLogger
+from logging import Logger
 from typing import Optional
 
 from wev import get_plugin, get_version
+from wev.logging import get_logger
 from wev.state import BaseState, State
-from wev.text import bold, dim, get_now
+from wev.text import bold, dim, displayable, get_now
 
 
 def explain(logger: Optional[Logger] = None, state: Optional[BaseState] = None) -> None:
@@ -13,7 +14,7 @@ def explain(logger: Optional[Logger] = None, state: Optional[BaseState] = None) 
     Args:
         logger: Logger. One will be created if not specified.
     """
-    return _explain(logger=logger or getLogger("wev"), state=state or State())
+    return _explain(logger=logger or get_logger(), state=state or State())
 
 
 def _explain(logger: Logger, state: BaseState) -> None:
@@ -40,8 +41,8 @@ def _explain(logger: Logger, state: BaseState) -> None:
             "%s%s %s will be resolved by the %s plugin.",
             str(index + 1).rjust(list_index_padding),
             list_index_suffix,
-            bold(variable.name),
-            bold(variable.handler),
+            bold(displayable(variable.names)),
+            bold(variable.plugin.id),
         )
 
         margin = "    "
@@ -52,11 +53,8 @@ def _explain(logger: Logger, state: BaseState) -> None:
 
         if not variable.should_read_from_cache:
             logger.info("")
-            plugin = get_plugin(
-                handler=variable.handler,
-                configuration=variable.configuration,
-            )
-            for line in plugin.explain():
+            plugin = get_plugin(variable.plugin)
+            for line in plugin.explain(logger=get_logger(name=variable.plugin.id)):
                 logger.info("%s%s", margin, dim(line))
 
         logger.info("")

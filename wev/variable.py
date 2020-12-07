@@ -1,62 +1,47 @@
-from logging import getLogger
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
-from wev.sdk import Resolution
+from wev.logging import get_logger
+from wev.sdk import PluginConfiguration, Resolution
 
 
-class Variable(dict):
+class Variable:
     """
     Represents the configuration for an environment variable.
-
-    Arguments:
-        name (str):    Environment variable name.
-        values (dict): Configuration values.
     """
 
-    def __init__(self, name: str, values: Dict[str, Any]) -> None:
-        self.logger = getLogger("wev")
-        self.logger.debug('Variable: name="%s" values="%s"', name, values)
-        self.name = name
-        self.update(values)
+    def __init__(self, names: Tuple[str, ...], store: Dict[str, Any]) -> None:
+        self.logger = get_logger()
+        self.logger.debug('Variable: name="%s" values="%s"', names, store)
+
+        if "resolution" in store and not isinstance(store["resolution"], dict):
+            raise ValueError(
+                '"resolution" is not a dictionary: %s', type(store["resolution"])
+            )
+
+        self.names = names
+        self.store = store
 
     @property
-    def configuration(self) -> Dict[Any, Any]:
+    def plugin(self) -> PluginConfiguration:
         """
-        Gets the handler's configuration.
-
-        Returns:
-            Handler's configuration.
-        """
-        configuration: Dict[Any, Any] = self.get("configuration", {})
-        if not configuration:
-            self.logger.debug("%s has no configuration.", self.name)
-        return configuration
-
-    @property
-    def handler(self) -> str:
-        """
-        Gets the name of the handler.
-
-        Returns:
-            Handler.
+        Gets the plugin configuration.
         """
         try:
-            return str(self["handler"])
+            return PluginConfiguration(self.store["plugin"])
         except KeyError:
-            raise KeyError(f'"handler" not set in variable: {self}')
+            raise ValueError(f'"plugin" not defined in variable: {self.store}')
+        except ValueError as ex:
+            raise ValueError(
+                f'Cannot create PluginConfiguration with: {self.store["plugin"]} ({ex})'
+            )
 
     @property
     def resolution(self) -> Optional[Resolution]:
         """
-        Gets the most-recent resolution.
-
-        Returns:
-            Resolution.
+        Gets the resolution.
         """
-        if resolution := self.get("resolution", None):
-            r = Resolution(resolution)
-            r["variable_name"] = self.name
-            return r
+        if store := self.store.get("resolution", None):
+            return Resolution(store=store)
         return None
 
     @property

@@ -2,30 +2,37 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import List
 
-from wev.sdk import Resolution
+from wev.sdk import Resolution, ResolutionSupport
+
+# from wev.sdk.exceptions import CannotPrepareError
 
 
 class PluginBase(ABC, dict):
     @abstractmethod
-    def explain(self) -> List[str]:
+    def explain(self, logger: Logger) -> List[str]:
         """
         Gets a human-readable explanation of how this plugin will resolve the
         environment variable.
 
-        Returns:
-            Explanation.
+        `logger` should be used for logging debug information and not for
+        returning the explanation.
         """
         pass
 
     @abstractmethod
-    def resolve(self, logger: Logger) -> Resolution:
+    def resolve(self, support: ResolutionSupport) -> Resolution:
         """
         Resolves the environment variable.
-
-        Args:
-            logger: Logger. Do not log confidential information.
-
-        Returns:
-            Resolution.
         """
         pass
+
+    # @property
+    # def plugin_configuration(self) -> PluginConfiguration:
+    #     """
+    #     Gets the plugin configuration (from the "plugin" key of the
+    #     configuration file).
+    #     """
+    #     try:
+    #         return PluginConfiguration(self["plugin"])
+    #     except KeyError:
+    #         raise CannotPrepareError(self)

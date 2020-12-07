@@ -3,12 +3,13 @@ from pytest import raises
 
 from wev.exceptions import MultiplePluginsError, NoPluginError
 from wev.plugins import get_plugin
+from wev.sdk import PluginConfiguration
 
 
 def test_get_plugin__no_match() -> None:
     with raises(NoPluginError) as ex:
-        get_plugin(handler="nope", configuration={})
-    assert str(ex.value) == 'No plugin installed for "nope".'
+        get_plugin(PluginConfiguration({"id": "none"}))
+    assert str(ex.value) == '"none" isn\'t installed. Try "pip3 install none"?'
 
 
 def mock_entry_point(name: str) -> Mock:
@@ -25,5 +26,5 @@ def test_get_plugin__multiple_matches(iter_entry_points: Mock) -> None:
     ]
 
     with raises(MultiplePluginsError) as ex:
-        get_plugin(handler="several", configuration={})
-    assert str(ex.value) == '2 plugins are installed for "several".'
+        get_plugin(PluginConfiguration({"id": "several"}))
+    assert str(ex.value) == '2 plugins are claiming to be "several".'

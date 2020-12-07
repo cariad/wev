@@ -1,32 +1,30 @@
-from typing import Any, Dict, cast
+from typing import cast
 
 from pkg_resources import iter_entry_points
 
 from wev.exceptions import MultiplePluginsError, NoPluginError
-from wev.sdk import PluginBase
+from wev.logging import get_logger
+from wev.sdk import PluginBase, PluginConfiguration
 
 
-def get_plugin(handler: str, configuration: Dict[Any, Any]) -> PluginBase:
+def get_plugin(config: PluginConfiguration) -> PluginBase:
     """
-    Gets a plugin instance for the given handler.
+    Gets a plugin instance to handle the given configuration.
 
-    Args:
-        handler:       Handler to get a plugin for.
-        configuration: Configuration to pass to the plugin.
+    Raises `NoPluginError` if there isn't a plugin available to handle this
+    configuration.
 
-    Returns:
-        Plugin instance.
-
-    Raises:
-        NoPluginError:        No plugins installed for this handler.
-        MultiplePluginsError: Multple plugins installed for this handler.
+    Raises `MultiplePluginsError` if there are multple plugins available to
+    handle this configuration.
     """
-    plugins = [e for e in iter_entry_points("wev.plugins") if e.name == handler]
+    plugins = [e for e in iter_entry_points("wev.plugins") if e.name == config.id]
 
     if len(plugins) == 0:
-        raise NoPluginError(handler=handler)
+        raise NoPluginError(plugin_id=config.id)
 
     if len(plugins) > 1:
-        raise MultiplePluginsError(handler=handler, count=len(plugins))
+        raise MultiplePluginsError(plugin_id=config.id, count=len(plugins))
 
-    return cast(PluginBase, plugins[0].load().Plugin(configuration))
+    get_logger().debug("Instantiating plugin with: %s", config)
+
+    return cast(PluginBase, plugins[0].load().Plugin(config))

@@ -1,12 +1,11 @@
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
-from logging import getLogger
 from typing import List, Optional
 
 from colorama import Style
 
 from wev.executor import execute
 from wev.explainer import explain
-from wev.log import init, set_level
+from wev.logging import get_logger, set_level
 from wev.version import get_version
 
 
@@ -19,8 +18,8 @@ class CLI:
     """
 
     def __init__(self, args: Optional[List[str]] = None) -> None:
-        init()
-        self.logger = getLogger("wev")
+        # init()
+        self.logger = get_logger()
 
         wev = Style.BRIGHT + "wev" + Style.RESET_ALL
 
@@ -84,7 +83,7 @@ class CLI:
         )
 
         self.args = self.arg_parser.parse_args(args)
-        set_level(self.args.log_level)
+        set_level(self.args.log_level.upper())
 
     def invoke(self) -> int:
         """
@@ -96,7 +95,7 @@ class CLI:
         try:
             return self.try_invoke()
         except Exception as ex:
-            self.logger.critical(ex)
+            self.logger.exception(ex)
             return 1
 
     def try_invoke(self) -> int:

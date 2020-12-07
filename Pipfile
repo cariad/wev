@@ -15,8 +15,11 @@ yamllint = "~=1.25"
 
 [packages]
 colorama = "~=0.4"
-dwalk = "~=1.0"
-pyyaml = "~=5.3"
+"ruamel.yaml" = "~=0.16"
+dwalk = {path = "./../dwalk/dist/dwalk-_1._1._1-py3-none-any.whl"}
+# wev = {path = "./../wev-awsmfa/dist/wev-_1._1._1-py3-none-any.whl"}
+wev-awsmfa = {path = "./../wev-awsmfa/dist/wev_awsmfa-_1._1._1-py3-none-any.whl"}
+pytz = "*"
 
 [requires]
 python_version = "3.9"
