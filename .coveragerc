@@ -1,0 +1,8 @@
+[run]
+command_line = -m pytest
+omit =
+    */test_*.py
+source = wev
+
+[report]
+fail_under = 89

@@ -1,0 +1,11 @@
+*.egg-info
+__*__
+.DS_Store
+.coverage
+.mypy_cache
+.pytest_cache
+.vscode
+build
+dist
+htmlcov
+typing-coverage.xml
