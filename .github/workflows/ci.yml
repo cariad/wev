@@ -1,110 +1,28 @@
-name: corf
+name: wev
 
 on:  # yamllint disable-line rule:truthy
   - push
 
 jobs:
 
-  update_requirements:
-    name: Update requirements.txt
-    runs-on: ubuntu-latest
+  build:
+    container: cariad/ci:1.0.0
+    runs-on: ubuntu-20.04
+
     steps:
       - uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9"
-
-      - name: Freeze requirements
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install pipenv
-          pipenv lock --dev --requirements > requirements.txt
-
-      - name: Archive requirements.txt
-        uses: actions/upload-artifact@v2
-        with:
-          name: requirements
-          path: requirements.txt
-          retention-days: 1
-
-  lint:
-    name: Lint
-    needs: update_requirements
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9"
-
-      - name: Download requirements.txt
-        uses: actions/download-artifact@v2
-        with:
-          name: requirements
-
-      - name: Install
-        run: pip install -r requirements.txt
-
-      - name: Lint
-        run: ./lint.sh
-
-  unit_test:
-    name: Unit test (Python ${{ matrix.python-version }})
-    needs: update_requirements
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version:
-          - "3.8"
-          - "3.9"
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Download requirements.txt
-        uses: actions/download-artifact@v2
-        with:
-          name: requirements
-
-      - name: Install
-        run: pip install -r requirements.txt
+      - name: Sync dependencies
+        run: pipenv sync --dev
 
       - name: Test
-        run: ./test.sh
-
-  build:
-    name: Build
-    needs: update_requirements
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.9"
-
-      - name: Download requirements.txt
-        uses: actions/download-artifact@v2
-        with:
-          name: requirements
-
-      - name: Install
-        run: pip install -r requirements.txt
+        run: pipenv run ./test.sh
 
       - name: Version
-        run: echo "${GITHUB_REF##*/}" > corf/VERSION
+        run: echo "${GITHUB_REF##*/}" > dwalk/VERSION
 
       - name: Build
-        run: ./build.sh
+        run: pipenv run ./build.sh
 
       - name: Archive distributable
         uses: actions/upload-artifact@v2
@@ -116,7 +34,7 @@ jobs:
   cli_test:
     name: CLI test (Python ${{ matrix.python-version }})
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         python-version:
@@ -135,52 +53,18 @@ jobs:
         with:
           name: distributable
 
-      - name: CLI test
+      - name: Install distributable
+        run: pip install "$(ls *.whl)"
+
+      - name: Assert version
         run: |
-          # Install corf.
-          pip install "$(ls *.whl)"
-
-          # Run corf to get its version, and assert that it's what we expect.
-          corf --version | tee version.tmp
+          wev --version | tee version.tmp
           grep -qF "${GITHUB_REF##*/}" version.tmp
-
-          # Set up environment variables for corf to authenticate with.
-          export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"
-          export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-
-          # Go into the magical directory.
-          cd testing/sample_project
-
-          # Create a Pipfile for this Python version.
-          cp Pipfile.template Pipfile
-          echo "python_version = \"${{ matrix.python-version }}\"" >> Pipfile
-
-          # Install pipenv
-          pip install --upgrade pip
-          pip install pipenv
-
-          # Assert that "tupper" is not yet installed, so we can later confirm
-          # that we definitely pulled via an authorisation token.
-          set +e
-          pipenv run python -m tupper
-          returned=$?
-          set -e
-          if [[ "${returned}" != "1" ]]; then
-            echo "Expected tupper execution to fail gracefully: ${returned}"
-            exit 1
-          fi
-
-          # Install our Pipfile (i.e. install "tupper") via "corf".
-          corf pipenv install
-
-          # Assert that we just pulled "tupper".
-          pipenv run python -m tupper
 
   publish:
     if: startsWith(github.ref, 'refs/tags')
-    name: Publish
-    needs: cli_test
-    runs-on: ubuntu-latest
+    needs: build
+    runs-on: ubuntu-20.04
     steps:
       - name: Download build distributable
         uses: actions/download-artifact@v2
@@ -194,7 +78,7 @@ jobs:
           ls -al dist/
 
       - name: Publish
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@v1.4.1
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
