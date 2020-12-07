@@ -87,6 +87,39 @@ wev <command goes here>
 wev pipenv install
 ```
 
+## Demo
+
+1. Install `wev`.
+1. Clone or download this project.
+1. `cd` into the `demo` directory.
+
+Inside `demo` are two files:
+
+1. A `.wev.yml` configuration file that will set the `DEMO_NAME` environment variable to `Finn Mertens`.
+1. `hello.py`, which will greet you by the name set in the `DEMO_NAME` environment variable.
+
+First, run the script directly:
+
+```bash
+python hello.py
+```
+
+```text
+Hello, whoever you are!
+```
+
+Now, run the script via `wev`:
+
+```bash
+wev python hello.py
+```
+
+```text
+Hello, Finn Mertens!
+```
+
+Any example with static, hard-coded values will be contrived, but hopefully this gives you a taste of what's possible with more-complex plugins.
+
 ## Plugin development
 
 This documentation is `TODO`. Yell if you want to build a plugin and need a hand.

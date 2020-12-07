@@ -56,6 +56,7 @@ setup(
     long_description_content_type="text/markdown",
     name="wev",
     packages=[
+        "wev",
         "wev.logging",
         "wev.sdk",
         "wev.state",
@@ -64,6 +65,7 @@ setup(
     # "py.typed" in each package's directory must be included for the package to
     # be considered typed.
     package_data={
+        "wev": ["py.typed"],
         "wev.logging": ["py.typed"],
         "wev.sdk": ["py.typed"],
         "wev.state": ["py.typed"],
