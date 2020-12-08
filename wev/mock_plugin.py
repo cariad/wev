@@ -18,6 +18,7 @@ class MockPlugin(PluginBase):
     `return_expires_at` will cause resolution to return an expiry date 60
     seconds in the future.
     """
+
     def __init__(
         self,
         values: dict,
