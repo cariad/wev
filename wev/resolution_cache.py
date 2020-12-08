@@ -56,12 +56,13 @@ class ResolutionCache:
         Raises `CacheReadError` if the cache cannot be read.
         """
         everything: Dict[str, Dict[Tuple[str, ...], Dict[str, Any]]] = {}
-        self.logger.debug("Reading cache: %s", self.path)
+        self.logger.debug("Reading entire cache: %s", self.path)
         try:
             with open(self.path, "r") as stream:
                 if content := stream.read().strip():
                     everything = YAML(typ="safe").load(content)
-                    self.logger.debug("Read cache: %s", everything)
+                    # Don't log the cache; it contains confidential information.
+                    self.logger.debug("Successfully read the entire cache.")
                 else:
                     self.logger.debug("Cache is empty: %s", self.path)
         except FileNotFoundError:
@@ -100,10 +101,11 @@ class ResolutionCache:
         self.logger.debug("Writing cache: %s", self.path)
         everything = self.read_all()
         everything[self.context] = self.resolutions
-        self.logger.debug("Saving entire cache: %s", everything)
+        # Don't log the cache; it contains confidential information.
+        self.logger.debug("Saving the entire cache: %s", self.path)
         with open(self.path, "w") as stream:
-            yaml = YAML(typ="safe")
-            yaml.dump(everything, stream)
+            YAML(typ="safe").dump(everything, stream)
+            self.logger.debug("Successfully saved the entire cache.")
 
     def update(self, names: Tuple, resolution: Resolution) -> None:
         """
@@ -113,5 +115,6 @@ class ResolutionCache:
             var_name:   Name of the environment variable.
             resolution: Resolution.
         """
-        self.logger.debug("Updating %s in cache: %s", names, resolution.store)
+        # Don't log the store; it's confidential.
+        self.logger.debug("Updating %s in cache.", names)
         self.resolutions[names] = resolution.store

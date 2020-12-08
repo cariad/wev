@@ -9,9 +9,15 @@ from wev.logging import get_logger
 class Resolution:
     def __init__(self, store: Dict[str, Any]) -> None:
         self.logger = get_logger()
-        self.logger.debug("Resolution: store=%s", store)
+
+        # Don't log the store; it probably contains confidential information.
+        self.logger.debug("Initialising new Resolution.")
+
         if not isinstance(store, dict):
-            raise ValueError('"store" is not a dictionary: %s', type(store))
+            raise ValueError(
+                'Resolution "store" is not a dictionary: %s',
+                type(store),
+            )
         self.store = store
 
     def __eq__(self, other: Any) -> bool:
@@ -48,7 +54,9 @@ class Resolution:
                 store.update({"values": value})
         if expires_at:
             store.update({"expires_at": expires_at.isoformat()})
-        get_logger().debug('"Resolution.make" created store: %s', store)
+
+        # Don't log the store; it contains confidential information.
+        get_logger().debug('"Resolution.make" created a new store.')
         return Resolution(store=store)
 
     @property
@@ -98,7 +106,8 @@ class Resolution:
 
     @property
     def values(self) -> Tuple[str, ...]:
-        self.logger.debug("Reading the resolved value: %s", self.store)
+        # Don't log the store; it's confidential.
+        self.logger.debug("Reading the resolved value.")
         values = self.store.get("values", [])
         if isinstance(values, tuple):
             return values

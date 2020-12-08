@@ -1,7 +1,5 @@
 # wev: run shell commands with environment variables
 
-**This is prerelease software. Don't use it. :)**
-
 `wev` is a command line tool for resolving environment variables then running shell commands.
 
 For example:
