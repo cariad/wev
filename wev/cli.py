@@ -6,6 +6,7 @@ from colorama import Style
 from wev.executor import execute
 from wev.explainer import explain
 from wev.logging import get_logger, set_level
+from wev.sdk.exceptions import CannotResolveError
 from wev.version import get_version
 
 
@@ -18,7 +19,6 @@ class CLI:
     """
 
     def __init__(self, args: Optional[List[str]] = None) -> None:
-        # init()
         self.logger = get_logger()
 
         wev = Style.BRIGHT + "wev" + Style.RESET_ALL
@@ -94,9 +94,12 @@ class CLI:
         """
         try:
             return self.try_invoke()
+        except CannotResolveError as ex:
+            self.logger.critical(ex)
+            return 1
         except Exception as ex:
             self.logger.exception(ex)
-            return 1
+            return 2
 
     def try_invoke(self) -> int:
         """

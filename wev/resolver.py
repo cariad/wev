@@ -5,6 +5,7 @@ from wev import get_plugin
 from wev.exceptions import IncorrectResolutionCount
 from wev.logging import get_logger
 from wev.sdk import Resolution, ResolutionSupport
+from wev.sdk.exceptions import CannotResolveError
 from wev.state import BaseState, State
 from wev.text import bold, dim
 
@@ -55,7 +56,12 @@ def resolve(state: Optional[BaseState] = None) -> Dict[str, str]:
             )
 
             plugin = get_plugin(variable.plugin)
-            resolution = plugin.resolve(support=support)
+
+            try:
+                resolution = plugin.resolve(support=support)
+            except CannotResolveError as ex:
+                raise CannotResolveError(f'"{variable.plugin.id}" failed: {ex}')
+
             if resolution.expires_at:
                 this_state.resolution_cache.update(
                     names=variable.names,
@@ -91,4 +97,4 @@ def resolve(state: Optional[BaseState] = None) -> Dict[str, str]:
 def confidential_prompt(preamble: str, prompt: str) -> str:
     print(dim(preamble))
     print()
-    return input(prompt)
+    return input(f"{prompt} ")

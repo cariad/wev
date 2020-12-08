@@ -1,6 +1,7 @@
 from mock import Mock, patch
 
 from wev.cli import CLI
+from wev.sdk.exceptions import CannotResolveError
 
 
 def test_args() -> None:
@@ -18,9 +19,14 @@ def test_command(execute: Mock) -> None:
     execute.assert_called_with(command=["pipenv", "sync"])
 
 
-@patch("wev.cli.execute", side_effect=Exception())
-def test_command__fails(execute: Mock) -> None:
+@patch("wev.cli.execute", side_effect=CannotResolveError())
+def test_command__cannot_resolve_error(execute: Mock) -> None:
     assert CLI(["pipenv", "sync"]).invoke() == 1
+
+
+@patch("wev.cli.execute", side_effect=Exception())
+def test_command__unhandled_error(execute: Mock) -> None:
+    assert CLI(["pipenv", "sync"]).invoke() == 2
 
 
 @patch("wev.cli.explain")

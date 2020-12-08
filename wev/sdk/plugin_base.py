@@ -4,8 +4,6 @@ from typing import List
 
 from wev.sdk import Resolution, ResolutionSupport
 
-# from wev.sdk.exceptions import CannotPrepareError
-
 
 class PluginBase(ABC, dict):
     @abstractmethod
@@ -25,14 +23,3 @@ class PluginBase(ABC, dict):
         Resolves the environment variable.
         """
         pass
-
-    # @property
-    # def plugin_configuration(self) -> PluginConfiguration:
-    #     """
-    #     Gets the plugin configuration (from the "plugin" key of the
-    #     configuration file).
-    #     """
-    #     try:
-    #         return PluginConfiguration(self["plugin"])
-    #     except KeyError:
-    #         raise CannotPrepareError(self)
