@@ -2,17 +2,25 @@ from datetime import datetime, timedelta
 from typing import Iterator, Optional
 
 from mock import Mock, patch
-from pytest import fixture, mark
+from pytest import fixture, mark, raises
 
 from wev.mock_plugin import MockPlugin
 from wev.resolver import fresh_resolution, resolve
 from wev.sdk import PluginBase, Resolution
+from wev.sdk.exceptions import CannotResolveError
 from wev.state import MockState
 
 
 @fixture
 def get_plugin() -> Iterator[PluginBase]:
-    plugin = MockPlugin(config={})
+    plugin = MockPlugin({}, return_value=("(value)",), return_expires_at=True)
+    with patch("wev.resolver.get_plugin", return_value=plugin) as patched:
+        yield patched
+
+
+@fixture
+def get_plugin_cannot_resolve_error() -> Iterator[PluginBase]:
+    plugin = MockPlugin({}, raises_cannot_resolve_error=True)
     with patch("wev.resolver.get_plugin", return_value=plugin) as patched:
         yield patched
 
@@ -47,3 +55,9 @@ def test_resolve(get_plugin: Mock) -> None:
     assert environs["beta"] == "(value)"
     assert environs["gamma"] == "gamma-value-old"
     assert environs["delta"] == "(value)"
+
+
+def test_resolve__cannot_resolve_error(get_plugin_cannot_resolve_error: Mock) -> None:
+    with raises(CannotResolveError) as ex:
+        resolve(state=MockState())
+    assert str(ex.value) == '"alpha-handler" failed: cannot reticulate splines'

@@ -11,7 +11,7 @@ from wev.state import MockState
 
 @fixture
 def get_plugin() -> Iterator[PluginBase]:
-    plugin = MockPlugin(config={})
+    plugin = MockPlugin({})
     with patch("wev.explainer.get_plugin", return_value=plugin) as patched:
         yield patched
 
