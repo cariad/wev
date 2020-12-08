@@ -42,9 +42,9 @@ class State(BaseState):
                 store = self.config[key]
 
                 if cached_resolution := self.resolution_cache.get(names):
-                    self.logger.debug(
-                        "Adding cached resolution: %s", cached_resolution.store
-                    )
+                    # Don't log the resolution; the values are probably
+                    # confidential.
+                    self.logger.debug("Adding cached resolution.")
                     store.update({"resolution": cached_resolution.store})
 
                 yield Variable(names=names, store=store)

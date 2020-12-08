@@ -11,11 +11,14 @@ class Variable:
 
     def __init__(self, names: Tuple[str, ...], store: Dict[str, Any]) -> None:
         self.logger = get_logger()
-        self.logger.debug('Variable: name="%s" values="%s"', names, store)
+
+        # Don't log the values; they're probably confidential.
+        self.logger.debug('Variable: name="%s"', names)
 
         if "resolution" in store and not isinstance(store["resolution"], dict):
             raise ValueError(
-                '"resolution" is not a dictionary: %s', type(store["resolution"])
+                '"resolution" is not a dictionary: %s',
+                type(store["resolution"]),
             )
 
         self.names = names
