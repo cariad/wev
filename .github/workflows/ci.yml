@@ -16,7 +16,7 @@ jobs:
         run: pipenv sync --dev
 
       - name: Install
-        run: pipenv install .
+        run: pipenv install . --skip-lock
 
       - name: Test
         run: pipenv run ./test.sh
