@@ -32,8 +32,7 @@ class NoPluginError(Exception):
 
 class IncorrectResolutionCountError(Exception):
     """
-    Raised when the number of resolutions does not match the number of
-    variables.
+    Raised when the number of resolutions does not match the number of variables.
     """
 
     def __init__(
