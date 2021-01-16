@@ -1,8 +1,10 @@
 [run]
 command_line = -m pytest
 omit =
+    */conftest.py
+    */mock_*.py
     */test_*.py
 source = wev
 
 [report]
-fail_under = 89
+fail_under = 90

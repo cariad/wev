@@ -2,7 +2,7 @@ from os import environ
 from typing import Dict, Optional
 
 from wev import get_plugin
-from wev.exceptions import IncorrectResolutionCount
+from wev.exceptions import IncorrectResolutionCountError
 from wev.logging import get_logger
 from wev.sdk import Resolution, ResolutionSupport
 from wev.sdk.exceptions import CannotResolveError
@@ -62,6 +62,8 @@ def resolve(state: Optional[BaseState] = None) -> Dict[str, str]:
             except CannotResolveError as ex:
                 raise CannotResolveError(f'"{variable.plugin.id}" failed: {ex}')
 
+            # If the resolution has a cache expiry date then cache it.
+            # Otherwise don't cache it, and remove any previously-set cache.
             if resolution.expires_at:
                 this_state.resolution_cache.update(
                     names=variable.names,
@@ -76,7 +78,7 @@ def resolve(state: Optional[BaseState] = None) -> Dict[str, str]:
             resolution_count = len(resolution.values)
 
             if variable_count != resolution_count:
-                raise IncorrectResolutionCount(
+                raise IncorrectResolutionCountError(
                     plugin_id=variable.plugin.id,
                     variable_count=variable_count,
                     resolution_count=resolution_count,
