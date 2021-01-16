@@ -30,12 +30,3 @@ def test_nopluginrerror() -> None:
 def test_multiplepluginsforhandlererror() -> None:
     ex = MultiplePluginsError(plugin_id="foo", count=3)
     assert str(ex) == '3 plugins are claiming to be "foo".'
-
-
-def test_incorrectresolutioncounterror() -> None:
-    ex = IncorrectResolutionCountError(
-        plugin_id="foo",
-        variable_count=1,
-        resolution_count=2,
-    )
-    assert str(ex) == '"foo" resolved 2 variables but expected 1.'
