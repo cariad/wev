@@ -47,7 +47,11 @@ class Plugin(PluginBase):
             return str(self["value"])
         except KeyError as ex:
             raise MissingConfigurationError(
-                config=self,
                 explanation="This is the value that will be echoed.",
                 key=str(ex),
             )
+
+    @property
+    def version(self) -> str:
+        """ Gets the plugin's version. """
+        return "1.0.0"

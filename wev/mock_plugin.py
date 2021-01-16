@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from logging import Logger
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from wev.sdk import PluginBase, Resolution, ResolutionSupport
 from wev.sdk.exceptions import CannotResolveError
@@ -21,7 +21,7 @@ class MockPlugin(PluginBase):
 
     def __init__(
         self,
-        values: dict,
+        values: Dict[Any, Any],
         raises_cannot_resolve_error: Optional[bool] = False,
         return_value: Optional[Tuple[str, ...]] = None,
         return_expires_at: Optional[bool] = False,
@@ -43,3 +43,7 @@ class MockPlugin(PluginBase):
             value=self.return_value,
             expires_at=self.return_expires_at,
         )
+
+    @property
+    def version(self) -> str:
+        return "1.2.3"
