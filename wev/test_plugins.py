@@ -6,6 +6,10 @@ from wev.plugins import get_plugin
 from wev.sdk import PluginConfiguration
 
 
+def test_get_plugin() -> None:
+    assert get_plugin(PluginConfiguration({"id": "wev-echo"}))
+
+
 def test_get_plugin__no_match() -> None:
     with raises(NoPluginError) as ex:
         get_plugin(PluginConfiguration({"id": "none"}))
