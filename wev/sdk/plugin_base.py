@@ -1,11 +1,15 @@
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import List
+from typing import Any, Dict, List
 
 from wev.sdk import Resolution, ResolutionSupport
 
 
-class PluginBase(ABC, dict):
+class PluginBase(ABC, Dict[Any, Any]):
+
+    def __str__(self) -> str:
+        return f"version {self.version}"
+
     @abstractmethod
     def explain(self, logger: Logger) -> List[str]:
         """
@@ -21,5 +25,13 @@ class PluginBase(ABC, dict):
     def resolve(self, support: ResolutionSupport) -> Resolution:
         """
         Resolves the environment variable.
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def version(self) -> str:
+        """
+        Gets the plugin's version.
         """
         pass
