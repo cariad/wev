@@ -14,8 +14,8 @@ class MissingConfigurationError(Exception):
                      scenarios.
     """
 
-    def __init__(self, config: dict, key: str, explanation: Optional[str] = None):
-        message = f"The {key} key is required in {config}"
+    def __init__(self, key: str, explanation: Optional[str] = None):
+        message = f"The {key} key is required in this plugin's configuration"
         message = f"{message}: {explanation}" if explanation else f"{message}."
         super().__init__(message)
 

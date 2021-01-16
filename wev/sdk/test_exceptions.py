@@ -7,16 +7,15 @@ from wev.sdk.exceptions import MissingConfigurationError
     "ex, expect",
     [
         (
-            MissingConfigurationError(config={"fooo": "bar"}, key="foo"),
-            "The foo key is required in {'fooo': 'bar'}.",
+            MissingConfigurationError(key="foo"),
+            "The foo key is required in this plugin's configuration.",
         ),
         (
             MissingConfigurationError(
-                config={"fooo": "bar"},
                 key="foo",
                 explanation="bar",
             ),
-            "The foo key is required in {'fooo': 'bar'}: bar",
+            "The foo key is required in this plugin's configuration: bar",
         ),
     ],
 )
