@@ -15,6 +15,9 @@ jobs:
       - name: Sync dependencies
         run: pipenv sync --dev
 
+      - name: Install
+        run: pipenv install .
+
       - name: Test
         run: pipenv run ./test.sh
 
