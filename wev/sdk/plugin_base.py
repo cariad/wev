@@ -6,7 +6,6 @@ from wev.sdk import Resolution, ResolutionSupport
 
 
 class PluginBase(ABC, Dict[Any, Any]):
-
     def __str__(self) -> str:
         return f"version {self.version}"
 
@@ -31,7 +30,5 @@ class PluginBase(ABC, Dict[Any, Any]):
     @property
     @abstractmethod
     def version(self) -> str:
-        """
-        Gets the plugin's version.
-        """
+        """ Gets the plugin's version. """
         pass

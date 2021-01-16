@@ -25,6 +25,10 @@ def get_plugin(config: PluginConfiguration) -> PluginBase:
     if len(plugins) > 1:
         raise MultiplePluginsError(plugin_id=config.id, count=len(plugins))
 
-    get_logger().debug("Instantiating plugin with: %s", config)
+    logger = get_logger()
 
-    return cast(PluginBase, plugins[0].load().Plugin(config))
+    logger.debug("Instantiating plugin with: %s", config)
+    plugin = cast(PluginBase, plugins[0].load().Plugin(config))
+
+    logger.debug("Instantiated plugin: %s", plugin)
+    return plugin

@@ -22,6 +22,14 @@ def test_resolve__missing_config(resolution_support: ResolutionSupport) -> None:
     with raises(MissingConfigurationError) as ex:
         Plugin({"foo": "bar"}).resolve(support=resolution_support)
     assert str(ex.value) == (
-        "The 'value' key is required in {'foo': 'bar'}: "
+        "The 'value' key is required in this plugin's configuration: "
         "This is the value that will be echoed."
     )
+
+
+def test_version() -> None:
+    assert Plugin({}).version == "1.0.0"
+
+
+def test_str() -> None:
+    assert str(Plugin({})) == "version 1.0.0"
