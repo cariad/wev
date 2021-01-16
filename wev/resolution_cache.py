@@ -1,6 +1,6 @@
 from logging import Logger
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, cast
 
 from ruamel.yaml import YAML
 
@@ -25,9 +25,6 @@ class ResolutionCache:
         logger: Optional[Logger] = None,
         path: Optional[Path] = None,
     ) -> None:
-        if not context:
-            raise ValueError("Cannot create a ResolutionCache with an empty context.")
-
         self.logger = logger or get_logger()
         self.context = context
         self.path = path or Path.home().absolute().joinpath(".wevcache")
@@ -45,7 +42,7 @@ class ResolutionCache:
         if store := self.resolutions.get(names, None):
             if values := store.get("values", None):
                 if isinstance(values, list):
-                    store["values"] = tuple(values)
+                    store["values"] = tuple(cast(List[str], values))
             return Resolution(store=store)
         return None
 
@@ -107,12 +104,12 @@ class ResolutionCache:
             YAML(typ="safe").dump(everything, stream)
             self.logger.debug("Successfully saved the entire cache.")
 
-    def update(self, names: Tuple, resolution: Resolution) -> None:
+    def update(self, names: Tuple[str, ...], resolution: Resolution) -> None:
         """
         Updates a cached resolution.
 
         Args:
-            var_name:   Name of the environment variable.
+            names:      Names of the environment variable.
             resolution: Resolution.
         """
         # Don't log the store; it's confidential.
