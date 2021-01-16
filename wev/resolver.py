@@ -62,6 +62,8 @@ def resolve(state: Optional[BaseState] = None) -> Dict[str, str]:
             except CannotResolveError as ex:
                 raise CannotResolveError(f'"{variable.plugin.id}" failed: {ex}')
 
+            # If the resolution has a cache expiry date then cache it.
+            # Otherwise don't cache it, and remove any previously-set cache.
             if resolution.expires_at:
                 this_state.resolution_cache.update(
                     names=variable.names,

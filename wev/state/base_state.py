@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod, abstractproperty
+from abc import ABC, abstractmethod
 from typing import Iterator
 
 from wev import ResolutionCache, Variable
@@ -10,7 +10,8 @@ class BaseState(ABC):
         self.logger = get_logger()
         self.logger.debug("Creating a new state.")
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def resolution_cache(self) -> ResolutionCache:
         pass
 
