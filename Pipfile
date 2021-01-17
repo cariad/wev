@@ -13,6 +13,7 @@ mock = "~=4.0"
 mypy = "~=0.790"
 pytest = "~=6.1"
 yamllint = "~=1.25"
+mkdocs-material = "*"
 
 [packages]
 colorama = "~=0.4"
