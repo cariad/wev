@@ -24,8 +24,7 @@ echo "Checking Python types..."
 mypy wev
 
 echo "Testing..."
-coverage run
-coverage report -m
+pytest
 
 if [[ "${ci:=}" != "true" ]]; then
   coverage html

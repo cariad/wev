@@ -1,0 +1,3 @@
+[tool.pytest.ini_options]
+testpaths = "wev"
+addopts = "--cov=wev --no-cov-on-fail"
