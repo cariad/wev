@@ -13,19 +13,19 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Sync dependencies
-        run: pipenv sync --dev && pipenv lock --requirements
-
-      - name: Install
-        run: pipenv install . --skip-lock
-
-      - name: Test
-        run: pipenv run ./test.sh
+        run: pipenv sync --dev
 
       - name: Version
         run: echo "${GITHUB_REF##*/}" > wev/VERSION
 
       - name: Build
         run: pipenv run ./build.sh
+
+      - name: Install
+        run: pip install "dist/$(ls dist/*.whl)"
+
+      - name: Test
+        run: pipenv run ./test.sh
 
       - name: Archive distributable
         uses: actions/upload-artifact@v2
