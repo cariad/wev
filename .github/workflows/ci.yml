@@ -24,9 +24,7 @@ jobs:
       - name: Install
         run: pip install "$(ls dist/*.whl)" --user
 
-      - env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        name: Test
+      - name: Test
         run: pipenv run ./test.sh
 
       - uses: codecov/codecov-action@v1
