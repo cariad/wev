@@ -22,7 +22,7 @@ jobs:
         run: pipenv run ./build.sh
 
       - name: Install
-        run: pip install "dist/$(ls dist/*.whl)"
+        run: pip install "$(ls dist/*.whl)"
 
       - name: Test
         run: pipenv run ./test.sh
