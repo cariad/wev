@@ -6,6 +6,6 @@ __*__
 .pytest_cache
 .vscode
 build
+coverage.xml
 dist
 htmlcov
-typing-coverage.xml

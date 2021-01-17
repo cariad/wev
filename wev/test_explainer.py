@@ -17,7 +17,8 @@ def get_plugin() -> Iterator[PluginBase]:
 
 
 @patch("wev.explainer.get_now", return_value="(now)")
-def test(get_now: Mock, get_plugin: PluginBase) -> None:
+@patch("wev.explainer.get_version", return_value="(version)")
+def test(get_version: Mock, get_now: Mock, get_plugin: PluginBase) -> None:
     logger = Mock()
     explain(logger=logger, state=MockState())
 
@@ -25,7 +26,7 @@ def test(get_now: Mock, get_plugin: PluginBase) -> None:
         call(
             "%s (%s) execution plan generated at %s:",
             "\x1b[1mwev\x1b[22m",
-            "-1.-1.-1",
+            "(version)",
             "\x1b[1m(now)\x1b[22m",
         ),
         call(""),

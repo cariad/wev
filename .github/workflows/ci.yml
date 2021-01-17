@@ -15,17 +15,22 @@ jobs:
       - name: Sync dependencies
         run: pipenv sync --dev
 
-      - name: Install
-        run: pipenv install . --skip-lock
-
-      - name: Test
-        run: pipenv run ./test.sh
-
       - name: Version
         run: echo "${GITHUB_REF##*/}" > wev/VERSION
 
       - name: Build
         run: pipenv run ./build.sh
+
+      - name: Install
+        run: pip install "$(ls dist/*.whl)" --user
+
+      - name: Test
+        run: pipenv run ./test.sh
+
+      - uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Archive distributable
         uses: actions/upload-artifact@v2
