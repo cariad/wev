@@ -23,6 +23,11 @@ jobs:
         name: Test
         run: pipenv run ./test.sh
 
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Version
         run: echo "${GITHUB_REF##*/}" > wev/VERSION
 
@@ -79,7 +84,7 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: us-east-1
-      BUCKET: wevcliapp-bucket-1hhoffdc0ib9x
+      S3_PATH: s3://wevcliapp-bucket-1hhoffdc0ib9x
     # if: startsWith(github.ref, 'refs/tags')
     needs: build
     runs-on: ubuntu-20.04
@@ -89,7 +94,7 @@ jobs:
         with:
           name: docs
       - name: Publish
-        run: aws s3 sync . ${BUCKET:?} --delete
+        run: aws s3 sync --delete . ${S3_PATH:?}
 
   publish_package:
     if: startsWith(github.ref, 'refs/tags')
