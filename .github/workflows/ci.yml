@@ -43,19 +43,6 @@ jobs:
           path: site
           retention-days: 1
 
-  temp_docs:
-    container: cariad/ci:1.2.0
-    needs: build
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Download docs
-        uses: actions/download-artifact@v2
-        with:
-          name: docs
-
-      - name: ls
-        run: ls -al
-
   cli_test:
     name: CLI test (Python ${{ matrix.python-version }})
     needs: build
@@ -86,7 +73,25 @@ jobs:
           wev --version | tee version.tmp
           grep -qF "${GITHUB_REF##*/}" version.tmp
 
-  publish:
+  publish_documentation:
+    container: cariad/ci:1.2.0
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
+      BUCKET: wevcliapp-bucket-1hhoffdc0ib9x
+    # if: startsWith(github.ref, 'refs/tags')
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download docs
+        uses: actions/download-artifact@v2
+        with:
+          name: docs
+      - name: Publish
+        run: aws s3 sync . ${BUCKET:?} --delete
+
+  publish_package:
     if: startsWith(github.ref, 'refs/tags')
     needs: build
     runs-on: ubuntu-20.04
