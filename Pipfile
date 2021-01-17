@@ -18,7 +18,7 @@ mkdocs-material = "*"
 mkdocs-git-revision-date-plugin = "*"
 
 [packages]
-colorama = "~=0.4"
+colorama = "*"
 dwalk = "~=1.1"
 pytz = "*"
 "ruamel.yaml" = "~=0.16"

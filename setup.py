@@ -47,7 +47,7 @@ setup(
     },
     include_package_data=True,
     install_requires=[
-        "colorama~=0.4",
+        "colorama~=0.4.4",
         "dwalk~=1.1",
         "pytz",
         "ruamel.yaml~=0.16",
