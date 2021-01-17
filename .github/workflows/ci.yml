@@ -15,8 +15,14 @@ jobs:
       - name: Sync dependencies
         run: pipenv sync --dev
 
+      - name: Version
+        run: echo "${GITHUB_REF##*/}" > wev/VERSION
+
+      - name: Build
+        run: pipenv run ./build.sh
+
       - name: Install
-        run: pipenv install . --skip-lock
+        run: pip install "$(ls dist/*.whl)" --user
 
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -27,12 +33,6 @@ jobs:
         with:
           fail_ci_if_error: true
           verbose: true
-
-      - name: Version
-        run: echo "${GITHUB_REF##*/}" > wev/VERSION
-
-      - name: Build
-        run: pipenv run ./build.sh
 
       - name: Archive distributable
         uses: actions/upload-artifact@v2

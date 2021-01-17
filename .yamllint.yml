@@ -1,7 +1,7 @@
 extends: default
 
 ignore: |
-  .venv
+   .venv
 
 rules:
   document-start: disable

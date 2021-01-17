@@ -25,7 +25,3 @@ mypy wev
 
 echo "Testing..."
 pytest
-
-if [[ "${ci:=}" != "true" ]]; then
-  coverage html
-fi
