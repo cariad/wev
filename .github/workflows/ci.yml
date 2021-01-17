@@ -83,7 +83,7 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: us-east-1
       S3_PATH: s3://wevcliapp-bucket-1hhoffdc0ib9x
-    # if: startsWith(github.ref, 'refs/tags')
+    if: startsWith(github.ref, 'refs/tags')
     needs: build
     runs-on: ubuntu-20.04
     steps:
