@@ -18,7 +18,9 @@ jobs:
       - name: Install
         run: pipenv install . --skip-lock
 
-      - name: Test
+      - env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        name: Test
         run: pipenv run ./test.sh
 
       - name: Version
@@ -41,13 +43,8 @@ jobs:
           path: site
           retention-days: 1
 
-
-
-
-
-
-
   temp_docs:
+    container: cariad/ci:1.2.0
     needs: build
     runs-on: ubuntu-20.04
     steps:
@@ -58,11 +55,6 @@ jobs:
 
       - name: ls
         run: ls -al
-
-
-
-
-
 
   cli_test:
     name: CLI test (Python ${{ matrix.python-version }})

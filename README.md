@@ -1,5 +1,7 @@
 # wev: run shell commands with environment variables
 
+[![Coverage Status](https://coveralls.io/repos/github/cariad/wev/badge.svg?branch=main)](https://coveralls.io/github/cariad/wev?branch=main)
+
 `wev` is a command line tool for resolving environment variables then running shell commands.
 
 For example:

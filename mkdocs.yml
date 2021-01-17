@@ -16,13 +16,13 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Create a plugin:
-    - Introduction: create-a-plugin/index.md
-    - Preparation: create-a-plugin/preparation.md
-    - Create plugin.py: create-a-plugin/plugin.py.md
-    - Create __init.py__: create-a-plugin/init.py.md
-    - Create setup.py: create-a-plugin/setup.py.md
-    - Code summary: create-a-plugin/code-summary.md
-    - Testing: create-a-plugin/testing.md
+      - Introduction: create-a-plugin/index.md
+      - Preparation: create-a-plugin/preparation.md
+      - Create plugin.py: create-a-plugin/plugin.py.md
+      - Create __init.py__: create-a-plugin/init.py.md
+      - Create setup.py: create-a-plugin/setup.py.md
+      - Code summary: create-a-plugin/code-summary.md
+      - Testing: create-a-plugin/testing.md
 plugins:
   - git-revision-date
   - search
