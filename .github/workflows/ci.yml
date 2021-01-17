@@ -6,7 +6,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
 
   build:
-    container: cariad/ci:1.0.0
+    container: cariad/ci:1.2.0
     runs-on: ubuntu-20.04
 
     steps:
