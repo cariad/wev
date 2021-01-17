@@ -34,6 +34,36 @@ jobs:
           path: dist
           retention-days: 1
 
+      - name: Archive documentation
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: site
+          retention-days: 1
+
+
+
+
+
+
+
+  temp_docs:
+    needs: build
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download docs
+        uses: actions/download-artifact@v2
+        with:
+          name: docs
+
+      - name: ls
+        run: ls -al
+
+
+
+
+
+
   cli_test:
     name: CLI test (Python ${{ matrix.python-version }})
     needs: build
