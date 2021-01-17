@@ -1,5 +1,7 @@
 # wev: run shell commands with environment variables
 
+[![codecov](https://codecov.io/gh/cariad/wev/branch/main/graph/badge.svg?token=MJ4M989DEX)](https://codecov.io/gh/cariad/wev)
+
 `wev` is a command line tool for resolving environment variables then running shell commands.
 
 For example:
