@@ -1,0 +1,29 @@
+site_name: "wev: with environment variables"
+theme:
+  features:
+    - navigation.instant
+    - navigation.tabs
+  font:
+    code: Fira Code
+    text: Rubik
+  icon:
+    repo: fontawesome/brands/github
+  name: material
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+nav:
+  - Home: index.md
+  - Create a plugin:
+      - Introduction: create-a-plugin/index.md
+      - Preparation: create-a-plugin/preparation.md
+      - Create plugin.py: create-a-plugin/plugin.py.md
+      - Create __init.py__: create-a-plugin/init.py.md
+      - Create setup.py: create-a-plugin/setup.py.md
+      - Code summary: create-a-plugin/code-summary.md
+      - Testing: create-a-plugin/testing.md
+plugins:
+  - git-revision-date
+  - search
+repo_url: https://github.com/cariad/wev

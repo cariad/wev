@@ -4,6 +4,8 @@
 
 `wev` is a command line tool for resolving environment variables then running shell commands.
 
+**User and developer documentation is online at [wevcli.app](https://wevcli.app).**
+
 For example:
 
 - If you have a `Pipfile` that expects the `CODEARTIFACT_AUTH_TOKEN` environment variable to set, `wev pipenv install` can resolve the value then run `pipenv install`.
