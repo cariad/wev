@@ -23,10 +23,10 @@ jobs:
         name: Test
         run: pipenv run ./test.sh
 
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
+      - uses: codecov/codecov-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          fail_ci_if_error: true
+          verbose: true
 
       - name: Version
         run: echo "${GITHUB_REF##*/}" > wev/VERSION
