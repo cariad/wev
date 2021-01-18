@@ -1,3 +1,5 @@
+![](https://github.com/cariad/wev/blob/main/docs/wev.png?raw=true)
+
 # wev: run shell commands with environment variables
 
 [![codecov](https://codecov.io/gh/cariad/wev/branch/main/graph/badge.svg?token=MJ4M989DEX)](https://codecov.io/gh/cariad/wev)
