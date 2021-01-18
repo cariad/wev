@@ -84,7 +84,7 @@ jobs:
       AWS_DEFAULT_REGION: us-east-1
       S3_PATH: s3://wevcliapp-bucket-1hhoffdc0ib9x
     if: startsWith(github.ref, 'refs/tags')
-    needs: build
+    needs: cli_test
     runs-on: ubuntu-20.04
     steps:
       - name: Download docs
@@ -94,9 +94,10 @@ jobs:
       - name: Publish
         run: aws s3 sync --delete . ${S3_PATH:?}
 
-  publish_package:
+  publish_to_github:
     if: startsWith(github.ref, 'refs/tags')
-    needs: build
+    name: Publish to GitHub release
+    needs: cli_test
     runs-on: ubuntu-20.04
     steps:
       - name: Download build distributable
@@ -104,11 +105,35 @@ jobs:
         with:
           name: distributable
 
-      - name: Create distributable directory
-        run: |
-          mkdir dist
-          cp *.whl dist
-          ls -al dist/
+      - name: Get path to distributable
+        run: echo "DISTRIBUTABLE=$(ls *.whl)" >> $GITHUB_ENV
+
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Publish
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          asset_path: ${{ env.DISTRIBUTABLE }}
+          asset_content_type: application/x-wheel+zip
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+
+  publish_to_pypi:
+    if: startsWith(github.ref, 'refs/tags')
+    name: Publish to PyPI
+    needs: cli_test
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Download build distributable
+        uses: actions/download-artifact@v2
+        with:
+          name: distributable
+          path: dist
 
       - name: Publish
         uses: pypa/gh-action-pypi-publish@v1.4.1
