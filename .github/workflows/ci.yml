@@ -120,6 +120,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           asset_path: ${{ env.DISTRIBUTABLE }}
+          asset_content_type: application/x-wheel+zip
           upload_url: ${{ steps.get_release.outputs.upload_url }}
 
   publish_to_pypi:
