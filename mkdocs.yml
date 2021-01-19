@@ -37,6 +37,7 @@ nav:
       - installation.md
       - CODE_OF_CONDUCT.md
       - CONTRIBUTING.md
+      - Licence: LICENSE.md
   - Configuration:
       - configuration/schema.md
       - configuration/directories.md
