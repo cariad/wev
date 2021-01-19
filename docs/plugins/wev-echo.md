@@ -12,7 +12,7 @@
 
 | Property | Required | Description          |
 |----------|----------|----------------------|
-| value  | ✔️        | Value to resolve to. |
+| value    | ✔️        | Value to resolve to. |
 
 ## Examples
 
