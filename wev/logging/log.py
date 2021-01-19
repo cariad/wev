@@ -10,6 +10,17 @@ done_init = False
 
 
 def get_logger(name: str = "wev") -> Logger:
+    """
+    Gets a logger.
+
+    Arguments:
+        name: Name of the logger. Defaults to "wev". When getting a logger for
+              a plugin, use the plugin's name.
+
+    Returns:
+        Logger.
+    """
+
     global done_init
 
     if not done_init:
@@ -18,6 +29,7 @@ def get_logger(name: str = "wev") -> Logger:
 
     logger = getLogger(name)
 
+    # Register our `Formatter` as a handler if it hasn't already.
     for handler in logger.handlers:
         if isinstance(handler.formatter, Formatter):
             break
