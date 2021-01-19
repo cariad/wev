@@ -24,7 +24,7 @@ class Plugin(PluginBase):
 
 ## Reading configuration
 
-For your plugin to be invoked, the user must have a `.wev.yml` configuration that refers to it.
+For your plugin to be invoked, the user must have a configuration (i.e. `wev.yml`) that refers to it.
 
 Our example plugin will resolve to whatever the user enters, but let's say we want the option to translate the input to upper or lower case.
 

@@ -8,6 +8,7 @@ from wev.text.normalize import displayable
 @mark.parametrize(
     "value, expect",
     [
+        ((), ""),
         (("one",), "one"),
         (("one", "two"), "one and two"),
         (("one", "two", "three"), "one, two and three"),

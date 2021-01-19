@@ -1,8 +1,6 @@
 from subprocess import run
 from typing import List
 
-from colorama import Style
-
 from wev.logging import get_logger
 from wev.resolver import resolve
 
@@ -19,5 +17,5 @@ def execute(command: List[str]) -> int:
     """
     logger = get_logger()
     variables = resolve()
-    logger.info("Starting %s%s%s...", Style.BRIGHT, command[0], Style.RESET_ALL)
+    logger.debug("Starting %s...", command[0])
     return run(command, env=variables).returncode

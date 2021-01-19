@@ -1,4 +1,4 @@
-Create a `.wev.yml` configuration file suitable for your plugin:
+Create a `wev.yml` configuration file suitable for your plugin:
 
 ```yaml
 # Invoke the wev-ask plugin to set the DEFAULT_FOO environment variable:
