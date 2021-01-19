@@ -4,7 +4,7 @@ from setuptools import setup
 
 from wev.version import get_version
 
-readme_path = Path(__file__).parent.joinpath("README.md")
+readme_path = Path(__file__).parent.joinpath("docs").joinpath("README.md")
 
 with open(readme_path, encoding="utf-8") as f:
     long_description = f.read()

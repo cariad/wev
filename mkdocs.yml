@@ -1,3 +1,15 @@
+copyright: Copyright &copy; 2021 Cariad Eccleston. Released under the MIT
+           Licence.
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/cariad/wev
+      name: wev on GitHub
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/cariadeccleston
+      name: Cariad Eccleston on Twitter
+
 site_name: "wev: with environment variables"
 theme:
   features:
@@ -9,12 +21,30 @@ theme:
   icon:
     repo: fontawesome/brands/github
   name: material
+  palette:
+    primary: indigo
+
 markdown_extensions:
   - admonition
   - pymdownx.highlight
   - pymdownx.superfences
+  - toc:
+      permalink: "#"
 nav:
-  - Home: index.md
+  - Getting started:
+      - index.md
+      - installation.md
+      - CODE_OF_CONDUCT.md
+      - CONTRIBUTING.md
+      - Licence: LICENSE.md
+  - Configuration:
+      - configuration/schema.md
+      # - configuration/directories.md
+      # - configuration/filenames.md
+  - Plugins:
+      - plugins/index.md
+      - plugins/wev-echo.md
+      - plugins/wev-awsmfa.md
   - Create a plugin:
       - Introduction: create-a-plugin/index.md
       - Preparation: create-a-plugin/preparation.md
