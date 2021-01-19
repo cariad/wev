@@ -1,21 +1,22 @@
 # wev-echo
 
-`wev-echo`
+## Overview
 
-```yaml
-MY_NAME:
-  plugin:
-    id: wev-echo
-    value: Bobby Pringles
-```
+`wev-echo` resolves to hard-coded values.
 
+## Installation
 
-The `wev-echo` plugin is bundled with `wev` and doesn't need to be installed separately.
+`wev-echo` is bundled with `wev`.
 
+## Configuration
+
+| Property | Required | Description          |
+|----------|----------|----------------------|
+| value  | ✔️        | Value to resolve to. |
 
 ## Examples
 
-### Amazon Web Services profile name
+### Amazon Web Services profile
 
 Say you're a freelance software developer.
 
@@ -24,7 +25,7 @@ You have two directories on your develpment machine:
 - `~/code` for personal projects.
 - `~/client-foo` for client _foo_'s projects.
 
-Both of these projects use Amazon Web Services, and you use the `aws` application daily whther you're working on personal or client projects.
+Both of these projects use Amazon Web Services, and you use the `aws` application daily whether you're working on personal or client projects.
 
 You have AWS named profiles set up for each of these areas:
 
@@ -33,20 +34,56 @@ You have AWS named profiles set up for each of these areas:
 
 Right now, you need to remember to run `aws` with `--profile personal` or `--profile foo` depending on the project you're working on. `wev` can help.
 
-Create `~/code/.wev.yml`:
+1. Install `wev`:
 
-```yaml
-AWS_DEFAULT_PROFILE:
-  plugin:
-    id: wev-echo
-    value: personal
-```
+    ```bash
+    pip3 install wev
+    ```
 
-Create `~/client-foo/.wev.yml`:
+2. Create `~/code/wev.yml`:
 
-```yaml
-AWS_DEFAULT_PROFILE:
-  plugin:
-    id: wev-echo
-    value: foo
-```
+    ```yaml
+    AWS_DEFAULT_PROFILE:
+      plugin:
+        id: wev-echo
+        value: personal
+    ```
+
+3. Create `~/client-foo/wev.yml`:
+
+    ```yaml
+    AWS_DEFAULT_PROFILE:
+      plugin:
+        id: wev-echo
+        value: foo
+    ```
+
+4. Open a terminal and `cd` into `~/code`. Verify that the _personal_ named profile is used:
+
+    ```bash
+    cd ~/code
+    wev aws sts get-caller-identity
+    ```
+
+    ```json
+    {
+      "UserId": "000000000000",
+      "Account": "000000000000",
+      "Arn": "arn:aws:iam::000000000000:user/personal-you"
+    }
+    ```
+
+4. Open a terminal and `cd` into `~/client-foo`. Verify that the _foo_ named profile is used:
+
+    ```bash
+    cd ~/client-foo
+    wev aws sts get-caller-identity
+    ```
+
+    ```json
+    {
+      "UserId": "111111111111",
+      "Account": "111111111111",
+      "Arn": "arn:aws:iam::111111111111:user/professional-you"
+    }
+    ```
