@@ -1,5 +1,7 @@
 # Contributing
 
+<!-- Keep "docs/contributing.md" up-to-date with changes. -->
+
 Hey, thank you for wanting to contribute to `wev`! 🥳
 
 Whether you want to raise a bug or suggest a change, your input is valued.
