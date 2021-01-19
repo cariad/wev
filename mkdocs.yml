@@ -1,4 +1,5 @@
-copyright: Copyright &copy; 2021 Cariad Eccleston. Released under the MIT licence.
+copyright: Copyright &copy; 2021 Cariad Eccleston. Released under the MIT
+           Licence.
 
 extra:
   social:
@@ -8,8 +9,6 @@ extra:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/cariadeccleston
       name: Cariad Eccleston on Twitter
-
-
 
 site_name: "wev: with environment variables"
 theme:
