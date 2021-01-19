@@ -10,7 +10,15 @@ from wev.state import BaseState
 class State(BaseState):
     def __init__(self) -> None:
         super().__init__()
-        self.config = dwalk(filenames=[".wev.yml", ".wev.user.yml"], include_meta=True)
+        self.config = dwalk(
+            filenames=[
+                ".wev.yml",
+                "wev.yml",
+                ".wev.user.yml",
+                "wev.user.yml",
+            ],
+            include_meta=True,
+        )
         self.logger.debug("Merged configuration: %s", self.config)
         self.logger.debug("Getting context...")
         self.context = self.config["__dwalk__"]["__dwalk__"]["most_specific_src"]

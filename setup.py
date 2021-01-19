@@ -58,6 +58,7 @@ setup(
     name="wev",
     packages=[
         "wev",
+        "wev.wev_echo",
         "wev.logging",
         "wev.sdk",
         "wev.state",
