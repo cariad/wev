@@ -9,12 +9,22 @@ theme:
   icon:
     repo: fontawesome/brands/github
   name: material
+  palette:
+    primary: indigo
+
 markdown_extensions:
   - admonition
   - pymdownx.highlight
   - pymdownx.superfences
+  - toc:
+      permalink: "#"
 nav:
-  - Home: index.md
+  - Getting started:
+      - index.md
+      - installation.md
+  - Plugins:
+      - plugins/index.md
+      - plugins/wev-echo.md
   - Create a plugin:
       - Introduction: create-a-plugin/index.md
       - Preparation: create-a-plugin/preparation.md

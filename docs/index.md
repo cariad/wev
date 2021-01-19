@@ -1,4 +1,4 @@
-# Introduction
+# wev: with environment variables
 
 `wev` is a cross-platform command line tool for resolving environment variables then running shell commands.
 
