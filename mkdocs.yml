@@ -39,8 +39,10 @@ nav:
       - Licence: LICENSE.md
   - Configuration:
       - configuration/schema.md
-      # - configuration/directories.md
-      # - configuration/filenames.md
+      - configuration/directories.md
+      - configuration/filenames.md
+  - Examples:
+      - examples/awsmfa.md
   - Plugins:
       - plugins/index.md
       - plugins/wev-echo.md
