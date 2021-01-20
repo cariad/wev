@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from logging import Logger
-from typing import List
+from typing import List, Union
 
 from wev.sdk import PluginBase, Resolution, ResolutionSupport
 from wev.sdk.exceptions import MissingConfigurationError
@@ -34,16 +34,27 @@ class Plugin(PluginBase):
         Returns:
             Resolution.
         """
-        expires_at = datetime.now() + timedelta(seconds=60)
-        support.logger.debug("Calculated expiry date: %s", expires_at)
-        return Resolution.make(value=self.value, expires_at=expires_at)
+        value = (
+            self.value
+            if isinstance(self.value, str)
+            else self.separator.join(self.value)
+        )
+        return Resolution.make(
+            value=value,
+            expires_at=datetime.now() + timedelta(seconds=60),
+        )
 
     @property
-    def value(self) -> str:
-        """
-        Gets the hard-coded value from the configuration.
-        """
+    def separator(self) -> str:
+        """ Gets the single value to return. """
+        return self.get("separator", " ")
+
+    @property
+    def value(self) -> Union[str, List[str]]:
+        """ Gets the single value or list of values to return. """
         try:
+            if isinstance(self["value"], list):
+                return self["value"]
             return str(self["value"])
         except KeyError as ex:
             raise MissingConfigurationError(

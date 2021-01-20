@@ -1,6 +1,7 @@
 from logging import Logger
+from typing import Any, Dict
 
-from pytest import raises
+from pytest import mark, raises
 
 from wev.sdk import ResolutionSupport
 from wev.sdk.exceptions import MissingConfigurationError
@@ -13,9 +14,20 @@ def test_explain(logger: Logger) -> None:
     ]
 
 
-def test_resolve(resolution_support: ResolutionSupport) -> None:
-    resolution = Plugin({"value": "foo"}).resolve(support=resolution_support)
-    assert resolution.values == ("foo",)
+@mark.parametrize(
+    "d, expect",
+    [
+        ({"value": "foo"}, ("foo",)),
+        ({"value": ["foo", "bar"]}, ("foo bar",)),
+        ({"separator": ".", "value": ["foo", "bar"]}, ("foo.bar",)),
+    ],
+)
+def test_resolve(
+    d: Dict[str, Any],
+    expect: str,
+    resolution_support: ResolutionSupport,
+) -> None:
+    assert Plugin(d).resolve(support=resolution_support).values == expect
 
 
 def test_resolve__missing_config(resolution_support: ResolutionSupport) -> None:

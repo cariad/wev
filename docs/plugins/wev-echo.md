@@ -10,9 +10,10 @@
 
 ## Configuration
 
-| Property | Required | Description          |
-|----------|----------|----------------------|
-| value    | ✔️        | Value to resolve to. |
+| Property  | Required | Description                                                                     |
+|-----------|----------|---------------------------------------------------------------------------------|
+| separator | ⨯        | Separator to insert between values when `value` is a list. Defaults to a space. |
+| value     | ✔️        | Value to resolve to. String or list of strings.                                 |
 
 ## Examples
 
