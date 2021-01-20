@@ -46,7 +46,7 @@ MY_ADDRESS:
 
 ### Multiple environment variables by one plugin
 
-The [wev-awsmfa](/plugins/wev-awsmfa.md) plugin creates temporary Amazon Web Services sessions, which are described by three values: a key identifier, a secret and a session token.
+The [wev-awsmfa](/plugins/wev-awsmfa) plugin creates temporary Amazon Web Services sessions, which are described by three values: a key identifier, a secret and a session token.
 
 To configure plugins that resolve multiple values, the _key_ must be a _list_.
 

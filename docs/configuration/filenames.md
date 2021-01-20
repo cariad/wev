@@ -2,7 +2,7 @@
 
 `wev` supports both shareable and private configuration.
 
-To achieve this, the naming of [configuration files](schema.md) is significant.
+To achieve this, the naming of [configuration files](../schema) is significant.
 
 ## Precedence
 

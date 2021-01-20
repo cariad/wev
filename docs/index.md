@@ -1,8 +1,16 @@
 # wev: with environment variables
 
-`wev` is a cross-platform command line tool for resolving environment variables then running shell commands.
+`wev` is a cross-platform command line tool for resolving temporary environment variables.
 
-- `wev` is **contextual**. Resolve different environment variables in different working directories.
-- Resolves environment variable values at runtime.
-- Caches values for as long as is appropriate.
-- Plugin-based and extensible.
+For example:
+
+- `wev` can [create a multi-factor authenticated Amazon Web Services session](/examples/awsmfa.md).
+<!-- - `wev` can [request a CodeArtifact authorisation token on behalf of pipenv](/examples/awscodeartifact.md). -->
+
+In a nutshell:
+
+- ⚙️ Extensible via **[plugins](/plugins)**.
+- 👷‍♀️ **[Create your own plugins](/create-a-plugin)** to suit any need.
+- 🔎 **[Contextual](/configuration/directories)**. Resolve different environment variables in different working directories.
+- 🔎 **[Team and private](/configuration/filenames)** configurations live side-by-side.
+- 📋 **Caches** values to avoid delays and prompts.
