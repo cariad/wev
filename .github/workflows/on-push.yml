@@ -13,15 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Virtual environment cache
+      - id: cache-venv
+        name: Get cached virtual environment
         uses: actions/cache@v1
         with:
-          path: .venv
           key: ${{ runner.os }}-venv-${{ hashFiles('Pipfile.lock') }}
+          path: ~/.local/share/virtualenvs
           restore-keys: |
             ${{ runner.os }}-venv-
 
-      - name: Sync dependencies
+      - if: steps.cache-venv.outputs.cache-hit != 'true'
+        name: Create virtual environment
         run: pipenv sync --dev
 
       - name: Version
@@ -53,13 +55,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Virtual environment cache
+      - id: cache-venv
+        name: Get cached virtual environment
         uses: actions/cache@v1
         with:
-          path: .venv
           key: ${{ runner.os }}-venv-${{ hashFiles('Pipfile.lock') }}
+          path: ~/.local/share/virtualenvs
           restore-keys: |
             ${{ runner.os }}-venv-
+
+      - if: steps.cache-venv.outputs.cache-hit != 'true'
+        name: Create virtual environment
+        run: pipenv sync --dev
 
       - name: Download build distributable
         uses: actions/download-artifact@v2
