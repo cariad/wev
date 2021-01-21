@@ -16,7 +16,9 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: us-east-1
       S3_PATH: s3://wevcliapp-bucket-1hhoffdc0ib9x
-    needs: test_cli
+    needs:
+      - test_cli
+      - test_docs
     runs-on: ubuntu-20.04
     steps:
       - name: Download docs
@@ -29,7 +31,9 @@ jobs:
 
   publish_to_github:
     name: Publish to GitHub release
-    needs: test_cli
+    needs:
+      - test_cli
+      - test_docs
     runs-on: ubuntu-20.04
     steps:
       - name: Download build distributable
@@ -59,7 +63,9 @@ jobs:
 
   publish_to_pypi:
     name: Publish to PyPI
-    needs: test_cli
+    needs:
+      - test_cli
+      - test_docs
     runs-on: ubuntu-20.04
     steps:
       - name: Download build distributable
