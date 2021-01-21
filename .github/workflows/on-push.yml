@@ -52,28 +52,26 @@ jobs:
     needs: build
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-
       - name: Download built documentation
         uses: actions/download-artifact@v2
         with:
           name: docs
 
       - name: Test
-        run: htmlproofer .              \
-               --allow-hash-href        \
-               --check-favicon          \
-               --check-html             \
-               --check-img-http         \
-               --check-opengraph        \
-               --disable-external       \
-               --report-invalid-tags    \
-               --report-missing-names   \
-               --report-script-embeds   \
-               --report-missing-doctype \
-               --report-eof-tags        \
-               --report-mismatched-tags \
-               --typhoeus-config '{"user_agent": "Mozilla/5.0 (compatible; htmlproofer)"}'
+        run: |
+          htmlproofer .              \
+            --allow-hash-href        \
+            --check-favicon          \
+            --check-html             \
+            --check-img-http         \
+            --check-opengraph        \
+            --disable-external       \
+            --report-invalid-tags    \
+            --report-missing-names   \
+            --report-script-embeds   \
+            --report-missing-doctype \
+            --report-eof-tags        \
+            --report-mismatched-tags \
 
 
   test_cli:
@@ -86,8 +84,6 @@ jobs:
           - "3.8"
           - "3.9"
     steps:
-      - uses: actions/checkout@v2
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
