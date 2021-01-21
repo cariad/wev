@@ -1,7 +1,5 @@
 # Introduction
 
-`wev` can't do much by itself. Plugins.
-
 This isn't a comprehensive list of plugins for `wev`. Anyone can [create a plugin](/create-a-plugin).
 
 ## Adding your plugin to this list
