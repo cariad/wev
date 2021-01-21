@@ -74,7 +74,7 @@ jobs:
           name: distributable
 
       - name: Install distributable
-        run: pip install "$(ls *.whl)"
+        run: pipenv run pip install "$(ls *.whl)"
 
       - name: Test
         run: pipenv run ./test.sh
