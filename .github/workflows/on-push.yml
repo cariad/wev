@@ -73,7 +73,7 @@ jobs:
                --report-missing-doctype \
                --report-eof-tags        \
                --report-mismatched-tags \
-               "--typhoeus-config '{\"user_agent\": \"Mozilla/5.0 (compatible; htmlproofer)\"}'"
+               --typhoeus-config '{"user_agent": "Mozilla/5.0 (compatible; htmlproofer)"}'
 
 
   test_cli:
