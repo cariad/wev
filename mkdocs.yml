@@ -12,6 +12,7 @@ extra:
 
 site_name: "wev: with environment variables"
 theme:
+  favicon: favicon.png
   features:
     - navigation.instant
     - navigation.tabs
