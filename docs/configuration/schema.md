@@ -1,16 +1,16 @@
 # Schema
 
-`wev` configurations are dictionaries descibed as YAML.
+`wev` configuration files are YAML dictionaries.
 
 ## Keys
 
-Each _key_ is the name(s) of the environment variable(s) to set.
+Each key is the name (or names) of the environment variable (or variables) to set.
 
-It must be either a _string_ or a _list_, depending on whether the plugin resolves _one_ or _more than one_ value.
+It must be either a string or a list, depending on whether the plugin resolves one or more than one value.
 
 ## Values
 
-Each _value_ is a `plugin` property which describes the `id` of the plugin in invoke and any plugin-specific configuration.
+Each value is a `plugin` property which describes the `id` of the plugin in invoke and any plugin-specific configuration.
 
 ## Examples
 
@@ -46,7 +46,7 @@ MY_ADDRESS:
 
 ### Multiple environment variables by one plugin
 
-The [wev-awsmfa](/plugins/wev-awsmfa) plugin creates temporary Amazon Web Services sessions, which are described by three values: a key identifier, a secret and a session token.
+The [wev-awsmfa](https://github.com/cariad/wev-awsmfa) plugin creates temporary Amazon Web Services sessions, which are described by three values: a key identifier, a secret and a session token.
 
 To configure plugins that resolve multiple values, the _key_ must be a _list_.
 
@@ -59,4 +59,4 @@ This example configures `wev` to resolve `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS
     duration: 30
 ```
 
-Each plugin's own documentation will describe whether the _key_ must be a _string_ or a _list_.
+Each plugin's own documentation will describe whether the key must be a string or a list.

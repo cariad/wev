@@ -41,15 +41,16 @@ nav:
       - CONTRIBUTING.md
       - Licence: LICENSE.md
   - Configuration:
+      - configuration/index.md
       - configuration/schema.md
       - configuration/directories.md
       - configuration/filenames.md
   - Examples:
-      - examples/awsmfa.md
+      - examples/aws-mfa-on-command-line.md
+      - examples/aws-profile-per-project.md
   - Plugins:
       - plugins/index.md
       - plugins/wev-echo.md
-      - plugins/wev-awsmfa.md
   - Create a plugin:
       - Introduction: create-a-plugin/index.md
       - Preparation: create-a-plugin/preparation.md
