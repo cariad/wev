@@ -46,7 +46,7 @@ nav:
       - configuration/directories.md
       - configuration/filenames.md
   - Examples:
-      - examples/awsmfa.md
+      - examples/aws-mfa-on-command-line.md
       - examples/aws-profile-per-project.md
   - Plugins:
       - plugins/index.md
