@@ -1,6 +1,8 @@
 copyright: Copyright &copy; 2021 Cariad Eccleston. Released under the MIT
            Licence.
 
+edit_uri: blob/main/docs/
+
 extra:
   social:
     - icon: fontawesome/brands/github
@@ -12,6 +14,7 @@ extra:
 
 site_name: "wev: with environment variables"
 theme:
+  favicon: favicon.png
   features:
     - navigation.instant
     - navigation.tabs

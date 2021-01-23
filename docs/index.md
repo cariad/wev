@@ -4,7 +4,7 @@
 
 For example:
 
-- `wev` can [create a multi-factor authenticated Amazon Web Services session](/examples/awsmfa.md).
+- `wev` can [create a multi-factor authenticated Amazon Web Services session](/examples/awsmfa).
 <!-- - `wev` can [request a CodeArtifact authorisation token on behalf of pipenv](/examples/awscodeartifact.md). -->
 
 In a nutshell:
