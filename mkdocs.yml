@@ -48,6 +48,7 @@ nav:
   - Examples:
       - examples/aws-mfa-on-command-line.md
       - examples/aws-profile-per-project.md
+      - examples/aws-codeartifact.md
   - Plugins:
       - plugins/index.md
       - plugins/wev-echo.md
