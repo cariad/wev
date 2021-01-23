@@ -20,7 +20,6 @@ theme:
     - navigation.tabs
   font:
     code: Fira Code
-    text: Rubik
   icon:
     repo: fontawesome/brands/github
   name: material
