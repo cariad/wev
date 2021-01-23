@@ -142,7 +142,7 @@ jobs:
       AWS_DEFAULT_REGION: us-east-1
       S3_PATH: s3://wevcliapp-bucket-1hhoffdc0ib9x
     if: startsWith(github.ref, 'refs/tags')
-    name: Publish documentation to wevcli.app
+    name: Update wevcli.app
     needs:
       - test_cli
       - test_code
@@ -159,7 +159,7 @@ jobs:
 
   publish_to_github:
     if: startsWith(github.ref, 'refs/tags')
-    name: Publish distributable to GitHub release
+    name: Publish to GitHub release
     needs:
       - test_cli
       - test_code
@@ -193,7 +193,7 @@ jobs:
 
   publish_to_pypi:
     if: startsWith(github.ref, 'refs/tags')
-    name: Publish distributable to PyPI
+    name: Publish to PyPI
     needs:
       - test_cli
       - test_code
