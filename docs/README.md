@@ -4,7 +4,12 @@
 
 [![codecov](https://codecov.io/gh/cariad/wev/branch/main/graph/badge.svg?token=MJ4M989DEX)](https://codecov.io/gh/cariad/wev)
 
-`wev` is a command line tool for resolving environment variables then running shell commands.
+`wev` is a cross-platform command line tool for resolving temporary environment variables.
+
+For example:
+
+- `wev` can [create a multi-factor authenticated Amazon Web Services session](https://wevcli.app/examples/aws-mfa-on-command-line).
+- `wev` can [set Amazon Web Services named profiles per-project](https://wevcli.app/examples/aws-profile-per-project).
 
 **User and developer documentation is online at [wevcli.app](https://wevcli.app).**
 
