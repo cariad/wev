@@ -1,9 +1,13 @@
-# Introduction
+# Available plugins
 
-This isn't a comprehensive list of plugins for `wev`. Anyone can [create a plugin](/create-a-plugin).
+This isn't a comprehensive list of plugins for `wev`, since anyone can [create a plugin](/create-a-plugin) and publish it independently.
 
-## Adding your plugin to this list
+Notable plugins include:
 
-If you've built and published a plugin for `wev` then--first of all--_awesome!_
+| Name                                                                 | Description                                     |
+|----------------------------------------------------------------------|-------------------------------------------------|
+| [wev-awscodeartifact](https://github.com/cariad/wev-awscodeartifact) | Amazon Web Services CodeArtifact authorisation  |
+| [wev-awsmfa](https://github.com/cariad/wev-awsmfa)                   | Amazon Web Services multi-factor authentication |
+| [wev-echo](wev-echo)                                                 | Echos strings |
 
-Please [raise an issue](https://github.com/cariad/wev/issues/new) summarising your plugin and where I can find it, and we'll collaborate on the documentation and promotion.
+To submit your own plugin for inclusion in this list, send me a pull request for review and I'll take a look. And thanks!

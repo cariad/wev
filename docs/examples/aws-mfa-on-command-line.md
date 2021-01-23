@@ -1,10 +1,12 @@
 # Amazon Web Services multi-factor authentication on the command line
 
-Say you're a software developer working for a client who gave you an IAM user that requires multi-factor authentication.
+You're a software developer working for a client who gave you an IAM user that requires multi-factor authentication.
 
 All of your work for this client is in subdirectories of `~/client-foo`.
 
-You'd like to run the `aws` CLI, but you can't pass one-time tokens to it to authenticate. `wev` can help.
+You'd like to run the `aws` CLI, but you can't pass one-time tokens to it to authenticate.
+
+`wev`'s contextual environment variables can manage that for you.
 
 1. Install `wev` and `wev-awsmfa`:
 

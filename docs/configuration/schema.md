@@ -1,16 +1,16 @@
 # Schema
 
-`wev` configurations are dictionaries descibed as YAML.
+`wev` configuration files are YAML dictionaries.
 
 ## Keys
 
-Each _key_ is the name(s) of the environment variable(s) to set.
+Each key is the name (or names) of the environment variable (or variables) to set.
 
-It must be either a _string_ or a _list_, depending on whether the plugin resolves _one_ or _more than one_ value.
+It must be either a string or a list, depending on whether the plugin resolves one or more than one value.
 
 ## Values
 
-Each _value_ is a `plugin` property which describes the `id` of the plugin in invoke and any plugin-specific configuration.
+Each value is a `plugin` property which describes the `id` of the plugin in invoke and any plugin-specific configuration.
 
 ## Examples
 

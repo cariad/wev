@@ -11,6 +11,6 @@ In a nutshell:
 
 - ⚙️ Extensible via **[plugins](/plugins)**.
 - 👷‍♀️ **[Create your own plugins](/create-a-plugin)** to suit any need.
-- 🔎 **[Contextual](/configuration/directories)**. Resolve different environment variables in different working directories.
-- 🔎 **[Team and private](/configuration/filenames)** configurations live side-by-side.
+- 🌍 **[Contextual](/configuration/directories)**. Resolve different environment variables in different working directories.
+- 👩‍👩‍👧‍👧 **[Team and private](/configuration/filenames)** configurations live side-by-side.
 - 📋 **Caches** values to avoid delays and prompts.
