@@ -27,7 +27,7 @@ Currently, you need to remember to set the `CODEARTIFACT_AUTH_TOKEN` environment
 1. Create `~/foo/wev.yml`:
 
     ```yaml
-    [CODEARTIFACT_AUTH_TOKEN]:
+    CODEARTIFACT_AUTH_TOKEN:
       plugin:
         id: wev-awscodeartifact
         domain: corp
@@ -53,7 +53,7 @@ You _really_ want to use your `work` named profile to generate a CodeArtifact au
 1. Create `~/foo/wev.user.yml`:
 
     ```yaml
-    [CODEARTIFACT_AUTH_TOKEN]:
+    CODEARTIFACT_AUTH_TOKEN:
       plugin:
         profile: work
     ```
