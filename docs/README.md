@@ -10,7 +10,7 @@ For example:
 
 - `wev` can [create a multi-factor authenticated Amazon Web Services session](https://wevcli.app/examples/aws-mfa-on-command-line).
 - `wev` can [set Amazon Web Services named profiles per-project](https://wevcli.app/examples/aws-profile-per-project).
-- `wev` can [request an Amazon Web Services CodeArtifact authorisation token on behalf of pipenv](https://wevcli.app/examples/aws-codeartifact.md).
+- `wev` can [request an Amazon Web Services CodeArtifact authorisation token on behalf of pipenv](https://wevcli.app/examples/aws-codeartifact).
 
 **User and developer documentation is online at [wevcli.app](https://wevcli.app).**
 
